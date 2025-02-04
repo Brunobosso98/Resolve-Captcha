@@ -26,9 +26,9 @@ def iniciar_driver():
 
 
 def ler_dados_excel(caminho):
-    """Lê o arquivo Excel e retorna o usuário e senha."""
+    """Lê o arquivo Excel e retorna uma lista de usuários e senhas."""
     dados = pd.read_excel(caminho)
-    return str(dados['Usuário'][0]), str(dados['Senha'][0])
+    return [(str(dados['Usuário'][i]), str(dados['Senha'][i])) for i in range(len(dados))]
 
 
 def extrair_numeros_imagem(driver):
@@ -129,13 +129,14 @@ def selecionar_filtros(driver):
 
 
 def main():
-    driver = iniciar_driver()
-    usuario, senha = ler_dados_excel(EXCEL_PATH)
-    
-    if tentar_login(driver, usuario, senha):
-        selecionar_filtros(driver)
-    
-    driver.quit()
+    dados = ler_dados_excel(EXCEL_PATH)  # Lê todos os usuários e senhas
+    for usuario, senha in dados:  # Loop através de cada usuário e senha
+        driver = iniciar_driver()
+        
+        if tentar_login(driver, usuario, senha):
+            selecionar_filtros(driver)
+        
+        driver.quit()
 
 
 if __name__ == "__main__":
