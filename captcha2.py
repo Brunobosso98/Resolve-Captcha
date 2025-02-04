@@ -68,6 +68,19 @@ def processar_login(driver, cnpj, senha, wait):
         
         time.sleep(10)
 
+        # Verificar se o login foi bem-sucedido pelo URL
+        if driver.current_url == 'https://itapira.sigiss.com.br/itapira/contribuinte/main.php':
+            return True  # Login bem-sucedido
+
+        # Verificar se há mensagem de erro
+        try:
+            erro_elemento = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="content"]/div[2]/div/font/b/center')))
+            if erro_elemento.is_displayed():
+                print("Erro no login: ", erro_elemento.text)
+                return False  # Indica que o login falhou
+        except Exception:
+            pass  # Se não encontrar o elemento de erro, assume que não houve erro
+
     except Exception as e:
         print(f"Erro no processo de login: {e}")
         return False  # Indica que o login falhou

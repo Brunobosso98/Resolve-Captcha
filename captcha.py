@@ -28,7 +28,7 @@ def iniciar_driver():
 def ler_dados_excel(caminho):
     """Lê o arquivo Excel e retorna uma lista de usuários e senhas."""
     dados = pd.read_excel(caminho)
-    return [(str(dados['Usuário'][i]), str(dados['Senha'][i])) for i in range(len(dados))]
+    return [(str(dados['Usuário'][i]), str(dados['Senha'][i]), str(dados['Mês'][i]), str(dados['Ano'][i])) for i in range(len(dados))]
 
 
 def extrair_numeros_imagem(driver):
@@ -100,7 +100,7 @@ def tentar_login(driver, usuario, senha):
             time.sleep(5)
 
 
-def selecionar_filtros(driver):
+def selecionar_filtros(driver, mes, ano):
     """Seleciona os filtros de mês e ano no sistema."""
     try:
         botao_modificar = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "btnAlterar")))
@@ -112,14 +112,14 @@ def selecionar_filtros(driver):
         )
         # Criar um objeto Select e escolher o mês
         select = Select(select_mes)
-        select.select_by_visible_text("Dezembro")  # Seleciona o mês "Dezembro"
+        select.select_by_visible_text(mes)  # Seleciona o mês
 
         # Localizar o elemento do select para o ano
         select_ano = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="panelFiltro"]/table/tbody/tr/td[7]/input'))
         )
         select_ano.clear()
-        select_ano.send_keys("2024")
+        select_ano.send_keys(ano)  # Envia o ano
 
         botao_ok = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'btnOk')))
@@ -130,11 +130,11 @@ def selecionar_filtros(driver):
 
 def main():
     dados = ler_dados_excel(EXCEL_PATH)  # Lê todos os usuários e senhas
-    for usuario, senha in dados:  # Loop através de cada usuário e senha
+    for usuario, senha, mes, ano in dados:  # Loop através de cada usuário e senha
         driver = iniciar_driver()
         
         if tentar_login(driver, usuario, senha):
-            selecionar_filtros(driver)
+            selecionar_filtros(driver, mes, ano)  # Passa mês e ano
         
         driver.quit()
 
