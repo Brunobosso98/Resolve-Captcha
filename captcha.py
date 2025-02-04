@@ -7,6 +7,7 @@ import pytesseract
 from PIL import Image
 import time
 import pandas as pd
+import requests
 
 # Configuração do caminho do Tesseract
 TESSERACT_PATH = r'C:\Users\bruno.martins\Desktop\robo Busca NFSe\dependencias sistema\Tesseract-OCR\tesseract.exe'
@@ -128,6 +129,23 @@ def selecionar_filtros(driver, mes, ano):
         print(f"Erro ao selecionar filtros: {e}")
 
 
+def baixar_xml(driver):
+    """Baixa o XML da página após a seleção dos filtros."""    
+    try:
+        # Obter a URL atual da página
+        url_xml = driver.current_url  # Usa a URL atual do driver
+        response = requests.get(url_xml)
+        
+        if response.status_code == 200:
+            with open('dados.xml', 'wb') as file:
+                file.write(response.content)
+            print("XML baixado com sucesso!")
+        else:
+            print(f"Erro ao baixar o XML: {response.status_code}")
+    except Exception as e:
+        print(f"Erro ao baixar o XML: {e}")
+
+
 def main():
     dados = ler_dados_excel(EXCEL_PATH)  # Lê todos os usuários e senhas
     for usuario, senha, mes, ano in dados:  # Loop através de cada usuário e senha
@@ -135,6 +153,7 @@ def main():
         
         if tentar_login(driver, usuario, senha):
             selecionar_filtros(driver, mes, ano)  # Passa mês e ano
+            baixar_xml(driver)  # Chama a função para baixar o XML
         
         driver.quit()
 
