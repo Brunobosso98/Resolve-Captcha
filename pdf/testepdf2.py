@@ -116,6 +116,6 @@ def main(pdf_path, output_path):
     criar_planilha(dados, output_path)
 
 if __name__ == "__main__":
-    pdf_file = r"C:\Users\bruno.martins\Desktop\ResolveCaptcha\livro fiscal\teste.pdf"
-    excel_file = r"C:\Users\bruno.martins\Desktop\ResolveCaptcha\livro fiscal\resultado.xlsx"
+    pdf_file = r"C:\Users\bruno.martins\Desktop\Automações\ResolveCaptcha\livro fiscal\teste.pdf"
+    excel_file = r"C:\Users\bruno.martins\Desktop\Automações\ResolveCaptcha\livro fiscal\resultado.xlsx"
     main(pdf_file, excel_file)
