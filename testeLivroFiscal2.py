@@ -12,6 +12,7 @@ import requests
 import os
 import re
 
+#   TESTE
 # Configuração do caminho do Tesseract
 TESSERACT_PATH = r'C:\Users\bruno.martins\Desktop\robo Busca NFSe\dependencias sistema\Tesseract-OCR\tesseract.exe'
 pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
