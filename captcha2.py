@@ -155,7 +155,12 @@ def clicar_encerramento_fiscal(driver, wait):
         )
         encerramento_fiscal_link.click()
         print("Link 'Encerramento Fiscal' clicado com sucesso!")
-                
+        
+        # Aguardar o iframe carregar
+        time.sleep(4)
+        iframe = wait.until(EC.frame_to_be_available_and_switch_to_it((By.ID, "main")))
+        print("Entrou no iframe 'main'.")
+
         # Procurar e clicar no botão "Encerrar Mes"
         botao_encerrar = wait.until(
             EC.element_to_be_clickable((By.ID, "btnSalvar"))
