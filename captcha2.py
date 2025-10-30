@@ -8,8 +8,8 @@ import pandas as pd
 import time
 
 # Configurações
-CAMINHO_TESSERACT = r'C:\Users\bruno.martins\Desktop\robo Busca NFSe\dependencias sistema\Tesseract-OCR\tesseract.exe'
-CAMINHO_EXCEL = r'C:\Users\bruno.martins\Desktop\ResolveCaptcha\Senha Municipio Itapira.xlsx'
+CAMINHO_TESSERACT = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+CAMINHO_EXCEL = r'C:\Users\bruno\Desktop\Automação\Resolve-Captcha\Senha Municipio Itapira.xlsx'
 URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
 
 pytesseract.pytesseract.tesseract_cmd = CAMINHO_TESSERACT
@@ -44,7 +44,7 @@ def extrair_numeros_imagem(driver, wait):
         numeros = ''.join(filter(str.isdigit, numeros))
 
     except Exception as e:
-        print(f"Erro na extração: {e}")
+        print(f"Erro na extração: {type(e).__name__}: {e}")
     
     return numeros
 
@@ -59,15 +59,8 @@ def preencher_campo(driver, element_id, valor, wait):
     except Exception as e:
         print(f"Erro ao preencher {element_id}: {e}")
 
-def processar_login(driver, cnpj, senha, wait):
+def processar_login(driver, wait):
     try:        
-        # Processar captcha
-        captcha = extrair_numeros_imagem(driver, wait)
-        if captcha:
-            preencher_campo(driver, "confirma", captcha)
-        
-        time.sleep(10)
-
         # Verificar se o login foi bem-sucedido pelo URL
         if driver.current_url == 'https://itapira.sigiss.com.br/itapira/contribuinte/main.php':
             return True  # Login bem-sucedido
@@ -102,7 +95,7 @@ def digitar_captcha(driver, numeros, wait):
     except Exception as e:
         print(f"Erro ao digitar captcha: {e}")
 
-def preencher_data(driver, wait):
+def preencher_data(driver, wait, mes, ano):
     try:
         # Localizar e interagir com o campo
         campo_modificar = wait.until(
@@ -110,12 +103,21 @@ def preencher_data(driver, wait):
         )
         campo_modificar.click()
 
-        campo_mes = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="panelFiltro"]/table/tbody/tr/td[3]/input')))
-        campo_mes.send_keys("Dezembro")
-        print("Mes digitado com sucesso!")
+        campo_mes = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="panelFiltro"]/table/tbody/tr/td[3]/select')))
+        campo_mes.send_keys(mes)
+        print(f"Mês '{mes}' digitado com sucesso!")
+        
+        campo_ano = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="panelFiltro"]/table/tbody/tr/td[7]/input')))
+        campo_ano.send_keys(ano)
+        print(f"Ano '{ano}' digitado com sucesso!")
+        
+        # Clicar no botão OK após preencher mês e ano
+        botao_ok = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "btnOk")))
+        botao_ok.click()
+        print("Botão OK clicado com sucesso!")
                 
     except Exception as e:
-        print(f"Erro ao digitar captcha: {e}")
+        print(f"Erro ao preencher data: {e}")
 
 def main():
     try:
@@ -149,8 +151,8 @@ def main():
                 else:
                     print("Nenhum número foi detectado!")
                 
-                if processar_login(driver, row['Usuário'], row['Senha'], wait):
-                    preencher_data(driver, wait)  # Chama preencher_data apenas se o login for bem-sucedido
+                if processar_login(driver, wait):
+                    preencher_data(driver, wait, row['Mês'], row['Ano'])  # Chama preencher_data apenas se o login for bem-sucedido
                 else:
                     print("Login falhou, não preenchendo a data.")
                     continue  # Pula para a próxima empresa se o login falhar
