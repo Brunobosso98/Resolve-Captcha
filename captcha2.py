@@ -65,8 +65,13 @@ def processar_login(driver, wait):
         if driver.current_url == 'https://itapira.sigiss.com.br/itapira/contribuinte/main.php':
             return True  # Login bem-sucedido
 
-        # Verificar se há mensagem de erro de login específico (Contribuinte Inexistente ou Senha Inválida)
+        # Verificar se há mensagem de erro de captcha inválido
         current_url = driver.current_url
+        if "msg=C%F3digo+de+Confirma%E7%E3o+Inv%E1lido" in current_url:
+            print("Erro de login: Código de Confirmação Inválido (captcha)")
+            return False  # Indica que o login falhou devido a captcha incorreto
+
+        # Verificar se há mensagem de erro de login específico (Contribuinte Inexistente ou Senha Inválida)
         if "msg=Contribuinte+Inexistente+ou+Senha+Inv%E1lida" in current_url:
             print("Erro de login: Contribuinte Inexistente ou Senha Inválida")
             return False  # Indica que o login falhou devido a credenciais incorretas
@@ -76,7 +81,11 @@ def processar_login(driver, wait):
             erro_elemento = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="content"]/div[2]/div/font/b/center')))
             if erro_elemento.is_displayed():
                 print("Erro no login: ", erro_elemento.text)
-                return False  # Indica que o login falhou
+                # Verificar se o erro é relacionado ao captcha
+                if "Confirmação" in erro_elemento.text or "confirmação" in erro_elemento.text or "Código" in erro_elemento.text:
+                    return False  # Indica que o login falhou devido a captcha incorreto
+                else:
+                    return False  # Outro tipo de erro de login
         except Exception:
             pass  # Se não encontrar o elemento de erro, assume que não houve erro
 
@@ -146,14 +155,7 @@ def clicar_encerramento_fiscal(driver, wait):
         )
         encerramento_fiscal_link.click()
         print("Link 'Encerramento Fiscal' clicado com sucesso!")
-        
-        # Aguardar e mudar para a nova aba/janela
-        time.sleep(3)  # Aguardar a nova aba carregar
-        handles = driver.window_handles
-        if len(handles) > 1:
-            driver.switch_to.window(handles[-1])  # Mudar para a última aba aberta
-            print("Mudança para nova aba realizada com sucesso!")
-        
+                
         # Procurar e clicar no botão "Encerrar Mes"
         botao_encerrar = wait.until(
             EC.element_to_be_clickable((By.ID, "btnSalvar"))
@@ -184,38 +186,60 @@ def main():
 
         # Para cada linha no Excel
         for index, row in df.iterrows():
-            driver = webdriver.Chrome()
-            driver.maximize_window()
-            wait = WebDriverWait(driver, 20)
-            driver.get(URL_LOGIN)
+            tentativas = 0
+            max_tentativas = 5
+            login_bem_sucedido = False
             
-            time.sleep(2)  # Adiciona uma pausa de 5 segundos para garantir que a página carregue completamente
+            while tentativas < max_tentativas and not login_bem_sucedido:
+                driver = webdriver.Chrome()
+                driver.maximize_window()
+                wait = WebDriverWait(driver, 20)
+                driver.get(URL_LOGIN)
+                
+                time.sleep(2)  # Adiciona uma pausa para garantir que a página carregue completamente
+                
+                try:
+                    if tentativas == 0:
+                        print(f"Processando linha {index + 1}: {row['Empresa']}")
+                    else:
+                        print(f"Tentativa {tentativas + 1} para a empresa: {row['Empresa']}")
+                    
+                    # Preencher credenciais antes de extrair o captcha
+                    preencher_campo(driver, "cnpj", row['Usuário'], wait)
+                    preencher_campo(driver, "senha", row['Senha'], wait)
+                    
+                    # Extrair números
+                    numeros = extrair_numeros_imagem(driver, wait)
+                    
+                    if numeros:
+                        print(f"Números extraídos: {numeros}")
+                        # Digitar no campo
+                        digitar_captcha(driver, numeros, wait)
+                        time.sleep(10)
+                        
+                        if processar_login(driver, wait):
+                            login_bem_sucedido = True  # Define como True para sair do loop
+                            preencher_data(driver, wait, row['Mês'], row['Ano'])  # Chama preencher_data apenas se o login for bem-sucedido
+                        else:
+                            # Verificar se o erro foi por captcha inválido
+                            current_url = driver.current_url
+                            if "msg=C%F3digo+de+Confirma%E7%E3o+Inv%E1lido" in current_url:
+                                print(f"Captcha inválido para {row['Empresa']}, tentando novamente...")
+                                tentativas += 1
+                            else:
+                                # Outro tipo de erro, não relacionado ao captcha
+                                print("Login falhou por outro motivo, não preenchendo a data.")
+                                break  # Sai do loop e vai para a próxima empresa
+                    else:
+                        print("Nenhum número foi detectado!")
+                        tentativas += 1  # Tenta novamente, pois o captcha não foi extraído
+                        if tentativas < max_tentativas:
+                            print(f"Tentando novamente ({tentativas}/{max_tentativas})...")
+                finally:
+                    driver.quit()
             
-            try:
-                print(f"Processando linha {index + 1}: {row['Empresa']}")
-                
-                # Preencher credenciais antes de extrair o captcha
-                preencher_campo(driver, "cnpj", row['Usuário'], wait)
-                preencher_campo(driver, "senha", row['Senha'], wait)
-                
-                # Extrair números
-                numeros = extrair_numeros_imagem(driver, wait)
-                
-                if numeros:
-                    print(f"Números extraídos: {numeros}")
-                    # Digitar no campo
-                    digitar_captcha(driver, numeros, wait)
-                    time.sleep(10)
-                else:
-                    print("Nenhum número foi detectado!")
-                
-                if processar_login(driver, wait):
-                    preencher_data(driver, wait, row['Mês'], row['Ano'])  # Chama preencher_data apenas se o login for bem-sucedido
-                else:
-                    print("Login falhou, não preenchendo a data.")
-                    continue  # Pula para a próxima empresa se o login falhar
-            finally:
-                driver.quit()
+            if not login_bem_sucedido:
+                print(f"Excedido o número máximo de tentativas para {row['Empresa']}. Indo para a próxima empresa.")
                 
     except Exception as e:
         print(f"Erro geral: {e}")
