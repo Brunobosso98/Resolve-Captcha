@@ -141,6 +141,33 @@ def clicar_encerramento_fiscal(driver, wait):
         encerramento_fiscal_link.click()
         print("Link 'Encerramento Fiscal' clicado com sucesso!")
         
+        # Aguardar e mudar para a nova aba/janela
+        time.sleep(3)  # Aguardar a nova aba carregar
+        handles = driver.window_handles
+        if len(handles) > 1:
+            driver.switch_to.window(handles[-1])  # Mudar para a última aba aberta
+            print("Mudança para nova aba realizada com sucesso!")
+        
+        # Procurar e clicar no botão "Encerrar Mes"
+        botao_encerrar = wait.until(
+            EC.element_to_be_clickable((By.ID, "btnSalvar"))
+        )
+        botao_encerrar.click()
+        print("Botão 'Encerrar Mes' clicado com sucesso!")
+        
+        # Lidar com o alerta do navegador com fallback de 2 minutos
+        try:
+            # Aguardar até 2 minutos pelo alerta
+            from selenium.webdriver.support.ui import WebDriverWait
+            fallback_wait = WebDriverWait(driver, 120)  # 2 minutos de espera
+            alert = fallback_wait.until(EC.alert_is_present())
+            alert_text = alert.text
+            print(f"Alerta encontrado: {alert_text}")
+            alert.accept()  # Clica em OK no alerta
+            print("Alerta aceito com sucesso!")
+        except:
+            print("Nenhum alerta encontrado ou não foi possível interagir com ele após 2 minutos. Continuando para a próxima empresa.")
+        
     except Exception as e:
         print(f"Botão 'Serviços Prestados' não encontrado ou erro ao clicar em 'Encerramento Fiscal': {e}")
 
