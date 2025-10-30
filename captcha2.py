@@ -6,6 +6,7 @@ import pytesseract
 from PIL import Image
 import pandas as pd
 import time
+from openpyxl import load_workbook
 
 # Configurações
 CAMINHO_TESSERACT = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
@@ -184,6 +185,34 @@ def clicar_encerramento_fiscal(driver, wait):
     except Exception as e:
         print(f"Botão 'Serviços Prestados' não encontrado ou erro ao clicar em 'Encerramento Fiscal': {e}")
 
+def atualizar_excel_status(linha_index, mensagem):
+    """Atualiza a coluna 'Status Processo' no Excel"""
+    try:
+        workbook = load_workbook(CAMINHO_EXCEL)
+        worksheet = workbook.active
+        
+        # Assumindo que a coluna 'Status Processo' é a próxima após as existentes
+        # Encontrar o índice da coluna 'Status Processo'
+        coluna_status = None
+        for col_idx, col_name in enumerate(worksheet[1], 1):
+            if col_name.value == 'Status Processo':
+                coluna_status = col_idx
+                break
+        
+        if coluna_status is not None:
+            # Atualizar a célula específica (linha_index + 2, pois o índice do Excel começa em 1 e a primeira linha é cabeçalho)
+            worksheet.cell(row=linha_index + 2, column=coluna_status, value=mensagem)
+        else:
+            # Se a coluna não existir, adicionar como nova coluna
+            coluna_status = worksheet.max_column + 1
+            worksheet.cell(row=1, column=coluna_status, value='Status Processo')
+            worksheet.cell(row=linha_index + 2, column=coluna_status, value=mensagem)
+        
+        workbook.save(CAMINHO_EXCEL)
+        workbook.close()
+    except Exception as e:
+        print(f"Erro ao atualizar o Excel: {e}")
+
 def main():
     try:
         # Ler dados do Excel
@@ -194,6 +223,7 @@ def main():
             tentativas = 0
             max_tentativas = 5
             login_bem_sucedido = False
+            login_falhou_credenciais = False  # Flag para indicar falha por credenciais
             
             while tentativas < max_tentativas and not login_bem_sucedido:
                 driver = webdriver.Chrome()
@@ -231,6 +261,12 @@ def main():
                             if "msg=C%F3digo+de+Confirma%E7%E3o+Inv%E1lido" in current_url:
                                 print(f"Captcha inválido para {row['Empresa']}, tentando novamente...")
                                 tentativas += 1
+                            elif "msg=Contribuinte+Inexistente+ou+Senha+Inv%E1lida" in current_url:
+                                # Login falhou por credenciais incorretas
+                                print(f"Login falhou por credenciais incorretas para {row['Empresa']}")
+                                atualizar_excel_status(index, 'Não foi possivel realizar o login.')
+                                login_falhou_credenciais = True
+                                break  # Sai do loop e vai para a próxima empresa
                             else:
                                 # Outro tipo de erro, não relacionado ao captcha
                                 print("Login falhou por outro motivo, não preenchendo a data.")
@@ -243,7 +279,7 @@ def main():
                 finally:
                     driver.quit()
             
-            if not login_bem_sucedido:
+            if not login_bem_sucedido and not login_falhou_credenciais:
                 print(f"Excedido o número máximo de tentativas para {row['Empresa']}. Indo para a próxima empresa.")
                 
     except Exception as e:
