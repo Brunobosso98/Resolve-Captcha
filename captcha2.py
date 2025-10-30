@@ -107,17 +107,42 @@ def preencher_data(driver, wait, mes, ano):
         campo_mes.send_keys(mes)
         print(f"Mês '{mes}' digitado com sucesso!")
         
-        campo_ano = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="panelFiltro"]/table/tbody/tr/td[7]/input')))
+        campo_ano = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="panelFiltro"]/table/tbody/tr/td[7]/input')))
+        campo_ano.clear()
         campo_ano.send_keys(ano)
         print(f"Ano '{ano}' digitado com sucesso!")
         
         # Clicar no botão OK após preencher mês e ano
-        botao_ok = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "btnOk")))
+        botao_ok = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-success")))
         botao_ok.click()
         print("Botão OK clicado com sucesso!")
+        
+        # Após preencher data, verificar e clicar em Encerramento Fiscal se disponível
+        clicar_encerramento_fiscal(driver, wait)
                 
     except Exception as e:
         print(f"Erro ao preencher data: {e}")
+
+def clicar_encerramento_fiscal(driver, wait):
+    try:
+        # Verificar se o botão "Serviços Prestados" existe
+        servicos_prestados_btn = wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Serviços Prestados')]"))
+        )
+        
+        # Clicar no botão "Serviços Prestados" para abrir o dropdown
+        servicos_prestados_btn.click()
+        print("Botão 'Serviços Prestados' clicado com sucesso!")
+        
+        # Aguardar o dropdown abrir e clicar em "Encerramento Fiscal"
+        encerramento_fiscal_link = wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//a[contains(@onclick, 'fechamento/prestado.php')]"))
+        )
+        encerramento_fiscal_link.click()
+        print("Link 'Encerramento Fiscal' clicado com sucesso!")
+        
+    except Exception as e:
+        print(f"Botão 'Serviços Prestados' não encontrado ou erro ao clicar em 'Encerramento Fiscal': {e}")
 
 def main():
     try:
