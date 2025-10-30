@@ -65,7 +65,13 @@ def processar_login(driver, wait):
         if driver.current_url == 'https://itapira.sigiss.com.br/itapira/contribuinte/main.php':
             return True  # Login bem-sucedido
 
-        # Verificar se há mensagem de erro
+        # Verificar se há mensagem de erro de login específico (Contribuinte Inexistente ou Senha Inválida)
+        current_url = driver.current_url
+        if "msg=Contribuinte+Inexistente+ou+Senha+Inv%E1lida" in current_url:
+            print("Erro de login: Contribuinte Inexistente ou Senha Inválida")
+            return False  # Indica que o login falhou devido a credenciais incorretas
+
+        # Verificar se há mensagem de erro genérica
         try:
             erro_elemento = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="content"]/div[2]/div/font/b/center')))
             if erro_elemento.is_displayed():
