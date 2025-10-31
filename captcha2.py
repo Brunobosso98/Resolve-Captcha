@@ -10,7 +10,7 @@ from openpyxl import load_workbook
 
 # Configurações
 CAMINHO_TESSERACT = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-CAMINHO_EXCEL = r'C:\Users\bruno\Desktop\Automação\Resolve-Captcha\Senha Municipio Itapira.xlsx'
+CAMINHO_EXCEL = r'C:\Users\bruno\Desktop\Automação\Resolve-Captcha\Senha Municipio Itapira Prestadoras (Maria).xlsx'
 URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
 
 pytesseract.pytesseract.tesseract_cmd = CAMINHO_TESSERACT
@@ -134,12 +134,12 @@ def preencher_data(driver, wait, mes, ano):
         print("Botão OK clicado com sucesso!")
         
         # Após preencher data, verificar e clicar em Encerramento Fiscal se disponível
-        clicar_encerramento_fiscal(driver, wait)
+        clicar_encerramento_fiscal(driver, wait, mes, ano)
                 
     except Exception as e:
         print(f"Erro ao preencher data: {e}")
 
-def clicar_encerramento_fiscal(driver, wait):
+def clicar_encerramento_fiscal(driver, wait, mes, ano):
     try:
         # Verificar se o botão "Serviços Prestados" existe
         servicos_prestados_btn = wait.until(
@@ -161,7 +161,7 @@ def clicar_encerramento_fiscal(driver, wait):
         time.sleep(4)
         iframe = wait.until(EC.frame_to_be_available_and_switch_to_it((By.ID, "main")))
         print("Entrou no iframe 'main'.")
-
+        
         # Procurar e clicar no botão "Encerrar Mes"
         botao_encerrar = wait.until(
             EC.element_to_be_clickable((By.ID, "btnSalvar"))
@@ -173,7 +173,7 @@ def clicar_encerramento_fiscal(driver, wait):
         try:
             # Aguardar até 2 minutos pelo alerta
             from selenium.webdriver.support.ui import WebDriverWait
-            fallback_wait = WebDriverWait(driver, 120)  # 2 minutos de espera
+            fallback_wait = WebDriverWait(driver, 20)  # 2 minutos de espera
             alert = fallback_wait.until(EC.alert_is_present())
             alert_text = alert.text
             print(f"Alerta encontrado: {alert_text}")
@@ -182,6 +182,79 @@ def clicar_encerramento_fiscal(driver, wait):
         except:
             print("Nenhum alerta encontrado ou não foi possível interagir com ele após 2 minutos. Continuando para a próxima empresa.")
         
+        # Após completar o encerramento fiscal, voltar ao frame principal
+        driver.switch_to.default_content()
+        print("Retornou ao frame principal.")
+        
+        # Aguardar um pouco para garantir que a página esteja estável
+        time.sleep(2)
+        
+        # Clicar novamente no botão "Serviços Prestados"
+        servicos_prestados_btn = wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Serviços Prestados')]"))
+        )
+        servicos_prestados_btn.click()
+        print("Botão 'Serviços Prestados' clicado novamente com sucesso!")
+        
+        # Clicar no link "Histórico de Boletos"
+        historico_boletos_link = wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//a[contains(@onclick, 'relatorio/listaBoletos_prest.php')]"))
+        )
+        historico_boletos_link.click()
+        print("Link 'Histórico de Boletos' clicado com sucesso!")
+        
+        # Aguardar o iframe carregar novamente
+        time.sleep(4)
+        iframe = wait.until(EC.frame_to_be_available_and_switch_to_it((By.ID, "main")))
+        print("Entrou no iframe 'main' para Histórico de Boletos.")
+        
+        # Preencher o select de mês com o valor do Excel
+        select_mes = wait.until(
+            EC.element_to_be_clickable((By.ID, "mesI"))
+        )
+        select_mes.send_keys(str(mes))
+        print(f"Mês '{mes}' selecionado com sucesso!")
+        
+        # Preencher o input de ano com o valor do Excel
+        input_ano = wait.until(
+            EC.element_to_be_clickable((By.ID, "anoI"))
+        )
+        input_ano.clear()
+        input_ano.send_keys(str(ano))
+        print(f"Ano '{ano}' preenchido com sucesso!")
+        
+        # Clicar no botão "Filtrar"
+        botao_filtrar = wait.until(
+            EC.element_to_be_clickable((By.ID, "Submit"))
+        )
+        botao_filtrar.click()
+        print("Botão 'Filtrar' clicado com sucesso!")
+        
+        # Aguardar o iframe "relatorio" carregar
+        time.sleep(4)
+        
+        # Mudar para o iframe "relatorio"
+        driver.switch_to.frame("relatorio")
+        print("Entrou no iframe 'relatorio'.")
+        
+        # Procurar pelo link do boleto na segunda coluna (elemento com o número do boleto)
+        try:
+            # Localizar o link do boleto (na segunda coluna da tabela)
+            link_boleto = wait.until(
+                EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, 'javascript:boleto_ver')]"))
+            )
+            
+            # Clicar no link do boleto
+            link_boleto.click()
+            print("Link do boleto clicado com sucesso!")
+            time.sleep(5)
+            
+        except:
+            print("Nenhum boleto encontrado para o filtro selecionado. Continuando para a próxima empresa.")
+        
+        # Voltar ao frame principal
+        driver.switch_to.default_content()
+                
     except Exception as e:
         print(f"Botão 'Serviços Prestados' não encontrado ou erro ao clicar em 'Encerramento Fiscal': {e}")
 
@@ -221,7 +294,7 @@ def main():
         # Para cada linha no Excel
         for index, row in df.iterrows():
             tentativas = 0
-            max_tentativas = 5
+            max_tentativas = 8
             login_bem_sucedido = False
             login_falhou_credenciais = False  # Flag para indicar falha por credenciais
             
