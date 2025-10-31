@@ -8,6 +8,8 @@ from PIL import Image
 import pandas as pd
 import time
 import os
+import glob
+import re
 from openpyxl import load_workbook
 
 # Configurações
@@ -113,7 +115,7 @@ def digitar_captcha(driver, numeros, wait):
     except Exception as e:
         print(f"Erro ao digitar captcha: {e}")
 
-def preencher_data(driver, wait, mes, ano):
+def preencher_data(driver, wait, mes, ano, empresa):
     try:
         # Localizar e interagir com o campo
         campo_modificar = wait.until(
@@ -135,13 +137,77 @@ def preencher_data(driver, wait, mes, ano):
         botao_ok.click()
         print("Botão OK clicado com sucesso!")
         
-        # Após preencher data, verificar e clicar em Encerramento Fiscal se disponível
-        clicar_encerramento_fiscal(driver, wait, mes, ano)
+        # Após preencher data, verificar e clicar em Livro Fiscal para testar download (ou Encerramento Fiscal para produção)
+        # Para testar o download, vamos usar a função de Livro Fiscal
+        # clicar_livro_fiscal(driver, wait, mes, ano, empresa)
+        # Para usar o encerramento fiscal (quando estiver disponível), substitua a linha acima por:
+        clicar_encerramento_fiscal(driver, wait, mes, ano, empresa)
                 
     except Exception as e:
         print(f"Erro ao preencher data: {e}")
 
-def clicar_encerramento_fiscal(driver, wait, mes, ano):
+def clicar_livro_fiscal(driver, wait, mes, ano, empresa):
+    try:
+        # Verificar se o botão "Serviços Prestados" existe
+        servicos_prestados_btn = wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Serviços Prestados')]"))
+        )
+        
+        # Clicar no botão "Serviços Prestados" para abrir o dropdown
+        servicos_prestados_btn.click()
+        print("Botão 'Serviços Prestados' clicado com sucesso!")
+        
+        # Aguardar o dropdown abrir e clicar em "Livro Fiscal"
+        livro_fiscal_link = wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//a[contains(@onclick, 'livroMensalP')]"))
+        )
+        livro_fiscal_link.click()
+        print("Link 'Livro Fiscal' clicado com sucesso!")
+        
+        # Mudar para a nova aba que foi aberta com o PDF
+        time.sleep(3)
+        janelas = driver.window_handles
+        if len(janelas) > 1:
+            driver.switch_to.window(janelas[1])  # Mudar para a nova aba
+            print("Mudou para a nova aba com o PDF do Livro Fiscal.")
+            
+            # Obter o caminho da pasta de download
+            pasta_download = os.path.join(os.getcwd(), str(ano), str(mes).zfill(2))
+            
+            # Aguardar tempo suficiente para o download começar
+            time.sleep(5)
+            
+            # Encontrar o arquivo PDF mais recente na pasta de download
+            arquivos_pdf = glob.glob(os.path.join(pasta_download, "*.pdf"))
+            if arquivos_pdf:
+                # Ordenar arquivos por data de modificação (mais recente primeiro)
+                arquivos_pdf.sort(key=os.path.getmtime, reverse=True)
+                arquivo_original = arquivos_pdf[0]  # Pegar o mais recente
+                
+                # Criar novo nome para o arquivo usando o nome da empresa
+                nome_limpo = re.sub(r'[<>:"/\\|?*]', '_', empresa)  # Remover caracteres inválidos para nomes de arquivo
+                novo_nome = os.path.join(pasta_download, f"{nome_limpo}.pdf")
+                
+                # Renomear o arquivo
+                os.rename(arquivo_original, novo_nome)
+                print(f"Arquivo PDF renomeado para: {novo_nome}")
+            else:
+                print("Nenhum arquivo PDF encontrado na pasta de download.")
+            
+            # Fechar a aba do PDF
+            driver.close()
+            print("Fechou a aba do PDF do Livro Fiscal.")
+            
+            # Voltar para a aba principal
+            driver.switch_to.window(janelas[0])
+            print("Retornou para a aba principal.")
+        else:
+            print("Não foi possível abrir o PDF do Livro Fiscal em uma nova aba.")
+        
+    except Exception as e:
+        print(f"Botão 'Serviços Prestados' não encontrado ou erro ao clicar em 'Livro Fiscal': {e}")
+
+def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa):
     try:
         # Verificar se o botão "Serviços Prestados" existe
         servicos_prestados_btn = wait.until(
@@ -275,8 +341,28 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano):
                 driver.switch_to.window(janelas[1])  # Mudar para a nova aba
                 print("Mudou para a nova aba com o PDF.")
                 
-                # O PDF deve começar a baixar automaticamente com as configurações definidas
-                time.sleep(5)  # Aguardar tempo suficiente para o download começar
+                # Obter o caminho da pasta de download
+                pasta_download = os.path.join(os.getcwd(), str(ano), str(mes).zfill(2))
+                
+                # Aguardar tempo suficiente para o download começar
+                time.sleep(5)
+                
+                # Encontrar o arquivo PDF mais recente na pasta de download
+                arquivos_pdf = glob.glob(os.path.join(pasta_download, "*.pdf"))
+                if arquivos_pdf:
+                    # Ordenar arquivos por data de modificação (mais recente primeiro)
+                    arquivos_pdf.sort(key=os.path.getmtime, reverse=True)
+                    arquivo_original = arquivos_pdf[0]  # Pegar o mais recente
+                    
+                    # Criar novo nome para o arquivo usando o nome da empresa
+                    nome_limpo = re.sub(r'[<>:"/\\|?*]', '_', empresa)  # Remover caracteres inválidos para nomes de arquivo
+                    novo_nome = os.path.join(pasta_download, f"{nome_limpo}.pdf")
+                    
+                    # Renomear o arquivo
+                    os.rename(arquivo_original, novo_nome)
+                    print(f"Arquivo PDF renomeado para: {novo_nome}")
+                else:
+                    print("Nenhum arquivo PDF encontrado na pasta de download.")
                 
                 # Fechar a aba do PDF
                 driver.close()
@@ -382,7 +468,7 @@ def main():
                         
                         if processar_login(driver, wait):
                             login_bem_sucedido = True  # Define como True para sair do loop
-                            preencher_data(driver, wait, row['Mês'], row['Ano'])  # Chama preencher_data apenas se o login for bem-sucedido
+                            preencher_data(driver, wait, row['Mês'], row['Ano'], row['Empresa'])  # Chama preencher_data apenas se o login for bem-sucedido
                         else:
                             # Verificar se o erro foi por captcha inválido
                             current_url = driver.current_url
