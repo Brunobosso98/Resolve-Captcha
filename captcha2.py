@@ -2,10 +2,12 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 import pytesseract
 from PIL import Image
 import pandas as pd
 import time
+import os
 from openpyxl import load_workbook
 
 # Configurações
@@ -244,10 +246,47 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano):
                 EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, 'javascript:boleto_ver')]"))
             )
             
-            # Clicar no link do boleto
+            # Obter o href do link para construir a URL do PDF
+            href = link_boleto.get_attribute("href")
+            
+            # Extrair os parâmetros do href (ex: boleto_ver(1481295, 9, 2025, 1, '', 1))
+            # Vamos usar a lógica para construir a URL do PDF com base no padrão fornecido
+            # O link real para o PDF é algo como:
+            # https://itapira.sigiss.com.br/itapira/cgi-local/contribuinte/livro/livro_fiscal_mensal_prestado_pdf.php?ccm=6103&cnpj=14097460000194&mes=9&ano=2025
+            
+            # Como não temos os valores exatos de ccm e cnpj, vamos tentar obter o link real do PDF
+            # Primeiro, vamos extrair o número do protocolo do boleto (20732083 no exemplo)
+            numero_boleto = link_boleto.text
+            print(f"Número do boleto encontrado: {numero_boleto}")
+            
+            # Em vez de tentar construir o URL do PDF, vamos tentar obter o link real do PDF
+            # Primeiro, precisamos pegar o número do CCM da página ou da empresa logada
+            # Por enquanto, faremos uma abordagem alternativa: clicar no link e esperar que o PDF seja baixado automaticamente
+            # com as configurações do navegador
+            
+            # Clicar no link do boleto para abrir a nova aba com o PDF
             link_boleto.click()
             print("Link do boleto clicado com sucesso!")
-            time.sleep(5)
+            
+            # Mudar para a nova aba que foi aberta
+            time.sleep(3)
+            janelas = driver.window_handles
+            if len(janelas) > 1:
+                driver.switch_to.window(janelas[1])  # Mudar para a nova aba
+                print("Mudou para a nova aba com o PDF.")
+                
+                # O PDF deve começar a baixar automaticamente com as configurações definidas
+                time.sleep(5)  # Aguardar tempo suficiente para o download começar
+                
+                # Fechar a aba do PDF
+                driver.close()
+                print("Fechou a aba do PDF.")
+                
+                # Voltar para a aba principal
+                driver.switch_to.window(janelas[0])
+                print("Retornou para a aba principal.")
+            else:
+                print("Não foi possível abrir o PDF em uma nova aba.")
             
         except:
             print("Nenhum boleto encontrado para o filtro selecionado. Continuando para a próxima empresa.")
@@ -299,7 +338,23 @@ def main():
             login_falhou_credenciais = False  # Flag para indicar falha por credenciais
             
             while tentativas < max_tentativas and not login_bem_sucedido:
-                driver = webdriver.Chrome()
+                # Configurar as opções do Chrome
+                chrome_options = Options()
+                
+                # Criar pasta de download com estrutura ano/mes
+                pasta_download = os.path.join(os.getcwd(), str(row['Ano']), str(row['Mês']).zfill(2))
+                os.makedirs(pasta_download, exist_ok=True)
+                
+                # Configurar preferências de download
+                prefs = {
+                    "download.default_directory": pasta_download,
+                    "download.prompt_for_download": False,
+                    "download.directory_upgrade": True,
+                    "plugins.always_open_pdf_externally": True  # Faz download em vez de abrir PDF no navegador
+                }
+                chrome_options.add_experimental_option("prefs", prefs)
+                
+                driver = webdriver.Chrome(options=chrome_options)
                 driver.maximize_window()
                 wait = WebDriverWait(driver, 20)
                 driver.get(URL_LOGIN)
