@@ -1,3 +1,4 @@
+import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -12,9 +13,20 @@ import glob
 import re
 from openpyxl import load_workbook
 
+def get_resource_path(relative_path):
+    """Obtém o caminho absoluto para recursos, funciona para desenvolvimento e para PyInstaller"""
+    if hasattr(sys, '_MEIPASS'):
+        # Estamos executando como executável do PyInstaller
+        # Procura o arquivo no diretório onde o executável está localizado
+        base_path = os.path.dirname(sys.executable)
+    else:
+        # Estamos executando como script Python normal
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 # Configurações
-CAMINHO_TESSERACT = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-CAMINHO_EXCEL = r'C:\Users\bruno\Desktop\Automação\Resolve-Captcha\Senha Municipio Itapira Prestadoras (Maria).xlsx'
+CAMINHO_TESSERACT = r'C:\dependencias sistema\tesseract.exe'
+CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
 URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
 
 pytesseract.pytesseract.tesseract_cmd = CAMINHO_TESSERACT

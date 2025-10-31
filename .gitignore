@@ -1,5 +1,9 @@
 *.xlsx
 
 *.png
-
+.build
+dist
 venv/
+*.spec
+*.xlsx
+*.png
