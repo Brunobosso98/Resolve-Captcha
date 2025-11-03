@@ -25,7 +25,7 @@ def get_resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 # Configurações
-CAMINHO_TESSERACT = r'C:\dependencias sistema\tesseract.exe'
+CAMINHO_TESSERACT = r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe'
 CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
 URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
 
@@ -127,7 +127,7 @@ def digitar_captcha(driver, numeros, wait):
     except Exception as e:
         print(f"Erro ao digitar captcha: {e}")
 
-def preencher_data(driver, wait, mes, ano, empresa):
+def preencher_data(driver, wait, mes, ano, empresa, linha_index=None):
     try:
         # Localizar e interagir com o campo
         campo_modificar = wait.until(
@@ -153,7 +153,7 @@ def preencher_data(driver, wait, mes, ano, empresa):
         # Para testar o download, vamos usar a função de Livro Fiscal
         # clicar_livro_fiscal(driver, wait, mes, ano, empresa)
         # Para usar o encerramento fiscal (quando estiver disponível), substitua a linha acima por:
-        clicar_encerramento_fiscal(driver, wait, mes, ano, empresa)
+        clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index)
                 
     except Exception as e:
         print(f"Erro ao preencher data: {e}")
@@ -219,7 +219,7 @@ def clicar_livro_fiscal(driver, wait, mes, ano, empresa):
     except Exception as e:
         print(f"Botão 'Serviços Prestados' não encontrado ou erro ao clicar em 'Livro Fiscal': {e}")
 
-def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa):
+def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index=None):
     try:
         # Verificar se o botão "Serviços Prestados" existe
         servicos_prestados_btn = wait.until(
@@ -253,7 +253,7 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa):
         try:
             # Aguardar até 2 minutos pelo alerta
             from selenium.webdriver.support.ui import WebDriverWait
-            fallback_wait = WebDriverWait(driver, 20)  # 2 minutos de espera
+            fallback_wait = WebDriverWait(driver, 120)  # 2 minutos de espera
             alert = fallback_wait.until(EC.alert_is_present())
             alert_text = alert.text
             print(f"Alerta encontrado: {alert_text}")
@@ -261,6 +261,8 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa):
             print("Alerta aceito com sucesso!")
         except:
             print("Nenhum alerta encontrado ou não foi possível interagir com ele após 2 minutos. Continuando para a próxima empresa.")
+            if linha_index is not None:
+                atualizar_excel_status(linha_index, 'Escrituração pode não ter sido finalizada')
         
         # Após completar o encerramento fiscal, voltar ao frame principal
         driver.switch_to.default_content()
@@ -480,7 +482,7 @@ def main():
                         
                         if processar_login(driver, wait):
                             login_bem_sucedido = True  # Define como True para sair do loop
-                            preencher_data(driver, wait, row['Mês'], row['Ano'], row['Empresa'])  # Chama preencher_data apenas se o login for bem-sucedido
+                            preencher_data(driver, wait, row['Mês'], row['Ano'], row['Empresa'], index)  # Chama preencher_data apenas se o login for bem-sucedido
                         else:
                             # Verificar se o erro foi por captcha inválido
                             current_url = driver.current_url
