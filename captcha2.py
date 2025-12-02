@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import InvalidSessionIdException, WebDriverException, StaleElementReferenceException
 import pytesseract
 from PIL import Image
 import pandas as pd
@@ -13,8 +14,6 @@ import glob
 import re
 import base64
 from openpyxl import load_workbook
-import requests
-from urllib.parse import urljoin
 
 def get_resource_path(relative_path):
     """Obtém o caminho absoluto para recursos, funciona para desenvolvimento e para PyInstaller"""
@@ -27,11 +26,25 @@ def get_resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-# Configurações
-CAMINHO_TESSERACT = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira Prestadoras (Maria).xlsx')
+
+def click_element(wait, locator, descricao, tentativas=3):
+    """Clica em um elemento garantindo nova referência quando ocorrer StaleElement."""
+    ultima_excecao = None
+    for tentativa in range(tentativas):
+        try:
+            elemento = wait.until(EC.element_to_be_clickable(locator))
+            elemento.click()
+            print(f"{descricao} clicado com sucesso!")
+            return elemento
+        except StaleElementReferenceException as exc:
+            ultima_excecao = exc
+            time.sleep(0.4)
+    raise ultima_excecao or Exception("Não foi possível clicar no elemento.")
+
+# Configuração idêntica à do captcha2.py para evitar divergências
+CAMINHO_TESSERACT = r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe'
+CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
 URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
-BASE_PDF_URL = "https://itapira.sigiss.com.br/itapira/barcode/ficha_comp.php?bid="
 
 pytesseract.pytesseract.tesseract_cmd = CAMINHO_TESSERACT
 
@@ -164,21 +177,8 @@ def preencher_data(driver, wait, mes, ano, empresa, linha_index=None):
 
 def clicar_livro_fiscal(driver, wait, mes, ano, empresa):
     try:
-        # Verificar se o botão "Serviços Prestados" existe
-        servicos_prestados_btn = wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Serviços Prestados')]"))
-        )
-        
-        # Clicar no botão "Serviços Prestados" para abrir o dropdown
-        servicos_prestados_btn.click()
-        print("Botão 'Serviços Prestados' clicado com sucesso!")
-        
-        # Aguardar o dropdown abrir e clicar em "Livro Fiscal"
-        livro_fiscal_link = wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//a[contains(@onclick, 'livroMensalP')]"))
-        )
-        livro_fiscal_link.click()
-        print("Link 'Livro Fiscal' clicado com sucesso!")
+        click_element(wait, (By.XPATH, "//button[contains(text(), 'Serviços Prestados')]"), "Botão 'Serviços Prestados'")
+        click_element(wait, (By.XPATH, "//a[contains(@onclick, 'livroMensalP')]"), "Link 'Livro Fiscal'")
         
         # Mudar para a nova aba que foi aberta com o PDF
         time.sleep(3)
@@ -225,21 +225,9 @@ def clicar_livro_fiscal(driver, wait, mes, ano, empresa):
 
 def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index=None):
     try:
-        # Verificar se o botão "Serviços Prestados" existe
-        servicos_prestados_btn = wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Serviços Prestados')]"))
-        )
-        
-        # Clicar no botão "Serviços Prestados" para abrir o dropdown
-        servicos_prestados_btn.click()
-        print("Botão 'Serviços Prestados' clicado com sucesso!")
-        
-        # Aguardar o dropdown abrir e clicar em "Encerramento Fiscal"
-        encerramento_fiscal_link = wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//a[contains(@onclick, 'fechamento/prestado.php')]"))
-        )
-        encerramento_fiscal_link.click()
-        print("Link 'Encerramento Fiscal' clicado com sucesso!")
+        click_element(wait, (By.XPATH, "//button[contains(text(), 'Serviços Prestados')]"), "Botão 'Serviços Prestados'")
+        time.sleep(1)
+        click_element(wait, (By.XPATH, "//a[contains(@onclick, 'fechamento/prestado.php')]"), "Link 'Encerramento Fiscal'")
         
         # Aguardar o iframe carregar
         time.sleep(4)
@@ -276,18 +264,10 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index=None
         time.sleep(2)
         
         # Clicar novamente no botão "Serviços Prestados"
-        servicos_prestados_btn = wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Serviços Prestados')]"))
-        )
-        servicos_prestados_btn.click()
-        print("Botão 'Serviços Prestados' clicado novamente com sucesso!")
-        
+        click_element(wait, (By.XPATH, "//button[contains(text(), 'Serviços Prestados')]"), "Botão 'Serviços Prestados'")
+
         # Clicar no link "Histórico de Boletos"
-        historico_boletos_link = wait.until(
-            EC.element_to_be_clickable((By.XPATH, "//a[contains(@onclick, 'relatorio/listaBoletos_prest.php')]"))
-        )
-        historico_boletos_link.click()
-        print("Link 'Histórico de Boletos' clicado com sucesso!")
+        click_element(wait, (By.XPATH, "//a[contains(@onclick, 'relatorio/listaBoletos_prest.php')]"), "Link 'Histórico de Boletos'")
         
         # Aguardar o iframe carregar novamente
         time.sleep(4)
@@ -337,54 +317,36 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index=None
             os.makedirs(pasta_download, exist_ok=True)
 
             arquivo_salvo = False
-            href = link_boleto.get_attribute("href") or ""
-            match = re.search(r"boleto_ver\((\d+)", href)
-            if match:
-                pdf_url = f"{BASE_PDF_URL}{match.group(1)}"
-                arquivo_salvo = baixar_pdf_por_url(driver, pdf_url, pasta_download, empresa)
-                if arquivo_salvo:
-                    print("PDF baixado diretamente via parâmetro do boleto.")
-                else:
-                    print("Falha ao baixar diretamente pelo parâmetro; usando fallback.")
-            else:
-                print("Não foi possível extrair o parâmetro do boleto; usando fallback.")
+            # Clicar no link e gerar o PDF via printToPDF após aguardar estabilidade
+            link_boleto.click()
+            print("Link do boleto clicado com sucesso!")
 
-            if not arquivo_salvo:
-                # Clicar no link do boleto para abrir a nova aba com o PDF
-                link_boleto.click()
-                print("Link do boleto clicado com sucesso!")
+            time.sleep(3)
+            janelas = driver.window_handles
+            if len(janelas) > 1:
+                driver.switch_to.window(janelas[1])
+                print("Mudou para a nova aba com o PDF.")
 
-                time.sleep(3)
-                janelas = driver.window_handles
-                if len(janelas) > 1:
-                    driver.switch_to.window(janelas[1])  # Mudar para a nova aba
-                    print("Mudou para a nova aba com o PDF.")
+                try:
+                    wait_pdf = WebDriverWait(driver, 30)
+                    wait_pdf.until(lambda d: d.execute_script("return document.readyState") == "complete")
+                    wait_pdf.until(lambda d: "Carregando Visualização" not in d.page_source)
+                    print("PDF estabilizado; chamando printToPDF.")
+                except Exception as exc:
+                    print(f"Tentativa de aguardar o PDF estável falhou: {exc}")
 
-                    if tentar_salvar_pdf_da_pagina(driver, pasta_download, empresa):
-                        arquivo_salvo = True
-                    elif gerar_pdf_via_print(driver, pasta_download, empresa):
-                        arquivo_salvo = True
+                arquivo_salvo = gerar_pdf_via_print(driver, pasta_download, empresa)
 
-                    if not arquivo_salvo:
-                        time.sleep(5)
-                        arquivos_pdf = glob.glob(os.path.join(pasta_download, "*.pdf"))
-                        if arquivos_pdf:
-                            arquivos_pdf.sort(key=os.path.getmtime, reverse=True)
-                            arquivo_original = arquivos_pdf[0]
-                            nome_limpo = re.sub(r'[<>:"/\\|?*]', '_', empresa)
-                            novo_nome = os.path.join(pasta_download, f"{nome_limpo}.pdf")
-                            os.rename(arquivo_original, novo_nome)
-                            print(f"Arquivo PDF renomeado para: {novo_nome}")
-                        else:
-                            print("Nenhum arquivo PDF encontrado na pasta de download.")
-
+                try:
                     driver.close()
                     print("Fechou a aba do PDF.")
+                except WebDriverException as e:
+                    print(f"Erro ao fechar a aba do PDF: {e}")
 
-                    driver.switch_to.window(janelas[0])
-                    print("Retornou para a aba principal.")
-                else:
-                    print("Não foi possível abrir o PDF em uma nova aba.")
+                driver.switch_to.window(janelas[0])
+                print("Retornou para a aba principal.")
+            else:
+                print("Não foi possível abrir o PDF em uma nova aba.")
             
         except:
             print("Nenhum boleto encontrado para o filtro selecionado. Continuando para a próxima empresa.")
@@ -403,54 +365,12 @@ def salvar_pdf_boleto(pasta_download, empresa, conteudo_bytes):
         arquivo_pdf.write(conteudo_bytes)
     print(f"Arquivo PDF salvo em: {caminho_destino}")
     return caminho_destino
-
-def baixar_pdf_por_url(driver, pdf_url, pasta_download, empresa):
-    """Baixa diretamente o PDF usando as credenciais de sessão do navegador."""
-    try:
-        session = requests.Session()
-        for cookie in driver.get_cookies():
-            session.cookies.set(cookie['name'], cookie['value'], domain=cookie.get('domain'), path=cookie.get('path'))
-
-        headers = {
-            "User-Agent": driver.execute_script("return navigator.userAgent;"),
-            "Accept": "application/pdf,application/octet-stream",
-            "Referer": driver.current_url,
-        }
-        resposta = session.get(pdf_url, headers=headers, timeout=60)
-        content_type = resposta.headers.get('Content-Type', '').lower()
-        if resposta.status_code == 200 and 'application/pdf' in content_type:
-            salvar_pdf_boleto(pasta_download, empresa, resposta.content)
-            return True
-        print(f"Resposta inesperada ao baixar o PDF ({resposta.status_code} - {content_type}).")
-    except Exception as e:
-        print(f"Erro ao baixar PDF diretamente: {e}")
-    return False
-
-def tentar_salvar_pdf_da_pagina(driver, pasta_download, empresa):
-    """Tenta extrair um PDF embutido, base64 ou com link direto, da página atual."""
-    try:
-        fonte = driver.page_source
-
-        base64_match = re.search(r'data:application/pdf;base64,([A-Za-z0-9+/=]+)', fonte)
-        if base64_match:
-            conteudo = base64.b64decode(base64_match.group(1))
-            salvar_pdf_boleto(pasta_download, empresa, conteudo)
-            print("PDF extraído diretamente de base64 na página.")
-            return True
-
-        link_match = re.search(r'(?:src|data|href)\s*=\s*[\'"]([^\'"]+\.pdf[^\'"]*)[\'"]', fonte, re.IGNORECASE)
-        if link_match:
-            pdf_url = urljoin(driver.current_url, link_match.group(1))
-            if baixar_pdf_por_url(driver, pdf_url, pasta_download, empresa):
-                print("PDF baixado a partir do link encontrado na página.")
-                return True
-
-    except Exception as e:
-        print(f"Erro ao inspecionar a página do PDF: {e}")
-    return False
-
 def gerar_pdf_via_print(driver, pasta_download, empresa):
     """Gera um PDF via DevTools printToPDF para capturar a aba de impressão."""
+    if not driver.session_id:
+        print("Sessão inválida antes de chamar printToPDF; aba provavelmente fechada.")
+        return False
+
     try:
         resultado = driver.execute_cdp_cmd("Page.printToPDF", {"printBackground": True})
         dados = base64.b64decode(resultado.get("data", ""))
@@ -458,6 +378,10 @@ def gerar_pdf_via_print(driver, pasta_download, empresa):
             salvar_pdf_boleto(pasta_download, empresa, dados)
             print("PDF gerado via printToPDF do Chrome.")
             return True
+    except InvalidSessionIdException as e:
+        print(f"Não foi possível gerar o PDF (sessão inválida): {e}")
+    except WebDriverException as e:
+        print(f"Erro inesperado ao gerar PDF via printToPDF: {e}")
     except Exception as e:
         print(f"Erro ao gerar PDF via printToPDF: {e}")
     return False
