@@ -245,14 +245,14 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index=None
         try:
             # Aguardar até 2 minutos pelo alerta
             from selenium.webdriver.support.ui import WebDriverWait
-            fallback_wait = WebDriverWait(driver, 10)  # 2 minutos de espera
+            fallback_wait = WebDriverWait(driver, 60)  # 2 minutos de espera
             alert = fallback_wait.until(EC.alert_is_present())
             alert_text = alert.text
             print(f"Alerta encontrado: {alert_text}")
             alert.accept()  # Clica em OK no alerta
             print("Alerta aceito com sucesso!")
         except:
-            print("Nenhum alerta encontrado ou não foi possível interagir com ele após 2 minutos. Continuando para a próxima empresa.")
+            print("Nenhum alerta encontrado ou não foi possível interagir com ele após 1 minuto. Continuando para a próxima empresa.")
             if linha_index is not None:
                 atualizar_excel_status(linha_index, 'Escrituração pode não ter sido finalizada')
         
