@@ -326,7 +326,6 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index=None
             if len(janelas) > 1:
                 driver.switch_to.window(janelas[1])
                 print("Mudou para a nova aba com o PDF.")
-                time.sleep(1)
 
                 try:
                     wait_pdf = WebDriverWait(driver, 30)

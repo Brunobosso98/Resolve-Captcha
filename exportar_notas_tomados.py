@@ -131,8 +131,19 @@ def atualizar_excel_status(linha_index, mensagem):
         print(f"Erro ao atualizar o Excel: {e}")
 
 
-def construir_pasta_notas_tomados(ano, mes):
-    pasta = os.path.join(os.getcwd(), "notas_fiscais", "tomados", str(ano), str(mes).zfill(2))
+def nome_empresa_limpa(empresa):
+    return re.sub(r'[<>:"/\\|?*]', '_', str(empresa or '').strip().upper())
+
+
+def construir_pasta_notas_tomados(ano, mes, empresa):
+    pasta = os.path.join(
+        os.getcwd(),
+        "notas_fiscais",
+        "tomados",
+        str(ano),
+        str(mes).zfill(2),
+        nome_empresa_limpa(empresa)
+    )
     os.makedirs(pasta, exist_ok=True)
     return pasta
 
@@ -166,7 +177,7 @@ def extrair_zip(arquivo_zip, pasta_destino):
 
 
 def exportar_notas_tomados(driver, wait, mes, ano, empresa, linha_index=None):
-    pasta_notas = construir_pasta_notas_tomados(ano, mes)
+    pasta_notas = construir_pasta_notas_tomados(ano, mes, empresa)
     try:
         click_element(wait, (By.XPATH, "//button[contains(text(), 'Acessórios')]"), "Botão 'Acessórios'")
         click_element(wait, (By.XPATH, "//a[contains(@onclick, \"abre_arquivo('dmm/_menu.php')\")]"), "Link 'Painel de Controle'")
@@ -226,7 +237,7 @@ def main():
             login_falhou_credenciais = False
             while tentativas < max_tentativas and not login_bem_sucedido:
                 chrome_options = Options()
-                pasta_notas = construir_pasta_notas_tomados(row['Ano'], row['Mês'])
+                pasta_notas = construir_pasta_notas_tomados(row['Ano'], row['Mês'], row['Empresa'])
                 prefs = {
                     "download.default_directory": pasta_notas,
                     "download.prompt_for_download": False,
