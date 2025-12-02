@@ -49,8 +49,8 @@ def construir_pasta_servicos_tomados(ano, mes):
     return pasta
 
 # Configuração idêntica à do captcha2.py para evitar divergências
-CAMINHO_TESSERACT = r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe'
-CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
+CAMINHO_TESSERACT = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira Prestadoras (Maria).xlsx')
 URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
 
 pytesseract.pytesseract.tesseract_cmd = CAMINHO_TESSERACT

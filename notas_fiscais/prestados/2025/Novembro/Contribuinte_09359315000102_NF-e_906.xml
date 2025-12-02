@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<NFe xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Prefeitura>Itapira</Prefeitura>
+<InscricaoPrestador>49472</InscricaoPrestador>
+<IEPrestador></IEPrestador>
+<CPFCNPJPrestador>
+<CNPJ>09359315000102</CNPJ>
+</CPFCNPJPrestador>
+<ChaveNFe>
+<NumeroNFe>906</NumeroNFe>
+<SerieNFe>1</SerieNFe>
+<CodigoVerificacao>YSW02WA0</CodigoVerificacao>
+<DataEmissaoNFe>2025-11-11 09:56:57</DataEmissaoNFe>
+</ChaveNFe>
+<RazaoSocialPrestador>LACERDA REPRESENTAÇÕES S/S LTDA.</RazaoSocialPrestador>
+<EnderecoPrestador>
+<Logradouro>RUA FRANCISCO GLICÉRIO</Logradouro>
+<NumeroEndereco>175</NumeroEndereco>
+<ComplementoEndereco>SALA 02</ComplementoEndereco>
+<Bairro>CENTRO</Bairro>
+<Cidade>ITAPIRA</Cidade>
+<UF>SP</UF>
+<CEP>13970140</CEP>
+</EnderecoPrestador>
+<TelefonePrestador>38436333</TelefonePrestador>
+<EmailPrestador></EmailPrestador>
+<StatusNFe>Ativa</StatusNFe>
+<TributacaoNFe>Tributado no Prestador</TributacaoNFe>
+<OpcaoSimples>NÃO</OpcaoSimples>
+<ValorServicos>52781,48</ValorServicos>
+<ValorBase>52781,48</ValorBase>
+<CodigoServico>1009</CodigoServico>
+<AliquotaServicos>2,00</AliquotaServicos>
+<ValorINSS>0,00</ValorINSS>
+<ValorIR>791,72</ValorIR>
+<ValorPIS>0,00</ValorPIS>
+<ValorCOFINS>0,00</ValorCOFINS>
+<ValorCSLL>0,00</ValorCSLL>
+<ValorISS>1.055,63</ValorISS>
+<ISSRetido>NÃO</ISSRetido>
+<InscricaoTomador>-63824</InscricaoTomador>
+<CPFCNPJTomador>
+<CPF>21982818000127</CPF>
+</CPFCNPJTomador>
+<IETomador></IETomador>
+<RazaoSocialTomador>BENCO - INDUSTRIA E COMERCIO DE ESTAMPADOS EM ACO LTDA</RazaoSocialTomador>
+<EnderecoTomador>
+<Logradouro>RODOVIA BR 267, KM 35</Logradouro>
+<NumeroEndereco>S/N</NumeroEndereco>
+<ComplementoEndereco>QUADRAA LOTE 1</ComplementoEndereco>
+<Bairro>NUCLEO EMPRESARIAL</Bairro>
+<Cidade>BATAGUASSU</Cidade>
+<UF>MS</UF>
+<CEP>79780000</CEP>
+</EnderecoTomador>
+<TelefoneTomador>(67) 3541-2840 / (67</TelefoneTomador>
+<EmailTomador>mariana.limabencoaco.com.br</EmailTomador>
+<Discriminacao>Prestação de Serviço de Representação Comercial.
+
+Valor líquido: R$ 51.989,76.
+
+Dados bancários:
+LACERDA REPRESENTAÇÕES S/S LTDA
+CNPJ: 09.359.315/0001-02 (PIX)
+
+BANCO ITAÚ – 341
+AG: 0166
+CC: 98948-3</Discriminacao>
+</NFe>

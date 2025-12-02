@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<NFe xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Prefeitura>Itapira</Prefeitura>
+<InscricaoPrestador>49472</InscricaoPrestador>
+<IEPrestador></IEPrestador>
+<CPFCNPJPrestador>
+<CNPJ>09359315000102</CNPJ>
+</CPFCNPJPrestador>
+<ChaveNFe>
+<NumeroNFe>910</NumeroNFe>
+<SerieNFe>1</SerieNFe>
+<CodigoVerificacao>IE32WU0S</CodigoVerificacao>
+<DataEmissaoNFe>2025-11-12 02:40:52</DataEmissaoNFe>
+</ChaveNFe>
+<RazaoSocialPrestador>LACERDA REPRESENTAÇÕES S/S LTDA.</RazaoSocialPrestador>
+<EnderecoPrestador>
+<Logradouro>RUA FRANCISCO GLICÉRIO</Logradouro>
+<NumeroEndereco>175</NumeroEndereco>
+<ComplementoEndereco>SALA 02</ComplementoEndereco>
+<Bairro>CENTRO</Bairro>
+<Cidade>ITAPIRA</Cidade>
+<UF>SP</UF>
+<CEP>13970140</CEP>
+</EnderecoPrestador>
+<TelefonePrestador>38436333</TelefonePrestador>
+<EmailPrestador></EmailPrestador>
+<StatusNFe>Ativa</StatusNFe>
+<TributacaoNFe>Tributado no Prestador</TributacaoNFe>
+<OpcaoSimples>NÃO</OpcaoSimples>
+<ValorServicos>5964,42</ValorServicos>
+<ValorBase>5964,42</ValorBase>
+<CodigoServico>1009</CodigoServico>
+<AliquotaServicos>2,00</AliquotaServicos>
+<ValorINSS>0,00</ValorINSS>
+<ValorIR>89,47</ValorIR>
+<ValorPIS>0,00</ValorPIS>
+<ValorCOFINS>0,00</ValorCOFINS>
+<ValorCSLL>0,00</ValorCSLL>
+<ValorISS>119,29</ValorISS>
+<ISSRetido>NÃO</ISSRetido>
+<InscricaoTomador>-97480019</InscricaoTomador>
+<CPFCNPJTomador>
+<CPF>52351634000192</CPF>
+</CPFCNPJTomador>
+<IETomador>137.325.312.116</IETomador>
+<RazaoSocialTomador>FER-GS DISTRIBUIDORA DE MATERIAIS FERRO E ACO LTDA</RazaoSocialTomador>
+<EnderecoTomador>
+<Logradouro>BENEDITO VALADARES RIBEIRO</Logradouro>
+<NumeroEndereco>1352</NumeroEndereco>
+<ComplementoEndereco></ComplementoEndereco>
+<Bairro>VILA NOVA CUMBICA</Bairro>
+<Cidade>GUARULHOS</Cidade>
+<UF>SP</UF>
+<CEP>07231010</CEP>
+</EnderecoTomador>
+<TelefoneTomador> (11) 2215-0603</TelefoneTomador>
+<EmailTomador>denisfer-gs.com</EmailTomador>
+<Discriminacao>Prestação de Serviço de Representação Comercial.
+
+Valor líquido: R$ 5.874,95.
+
+Dados bancários:
+LACERDA REPRESENTAÇÕES S/S LTDA
+CNPJ: 09.359.315/0001-02 (PIX)
+
+BANCO ITAÚ – 341
+AG: 0166
+CC: 98948-3</Discriminacao>
+</NFe>

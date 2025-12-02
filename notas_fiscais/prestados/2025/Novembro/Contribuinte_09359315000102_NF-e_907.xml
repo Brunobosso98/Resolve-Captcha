@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<NFe xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Prefeitura>Itapira</Prefeitura>
+<InscricaoPrestador>49472</InscricaoPrestador>
+<IEPrestador></IEPrestador>
+<CPFCNPJPrestador>
+<CNPJ>09359315000102</CNPJ>
+</CPFCNPJPrestador>
+<ChaveNFe>
+<NumeroNFe>907</NumeroNFe>
+<SerieNFe>1</SerieNFe>
+<CodigoVerificacao>6F5HS5H2</CodigoVerificacao>
+<DataEmissaoNFe>2025-11-11 11:46:18</DataEmissaoNFe>
+</ChaveNFe>
+<RazaoSocialPrestador>LACERDA REPRESENTAÇÕES S/S LTDA.</RazaoSocialPrestador>
+<EnderecoPrestador>
+<Logradouro>RUA FRANCISCO GLICÉRIO</Logradouro>
+<NumeroEndereco>175</NumeroEndereco>
+<ComplementoEndereco>SALA 02</ComplementoEndereco>
+<Bairro>CENTRO</Bairro>
+<Cidade>ITAPIRA</Cidade>
+<UF>SP</UF>
+<CEP>13970140</CEP>
+</EnderecoPrestador>
+<TelefonePrestador>38436333</TelefonePrestador>
+<EmailPrestador></EmailPrestador>
+<StatusNFe>Ativa</StatusNFe>
+<TributacaoNFe>Tributado no Prestador</TributacaoNFe>
+<OpcaoSimples>NÃO</OpcaoSimples>
+<ValorServicos>4645,00</ValorServicos>
+<ValorBase>4645,00</ValorBase>
+<CodigoServico>1009</CodigoServico>
+<AliquotaServicos>2,00</AliquotaServicos>
+<ValorINSS>0,00</ValorINSS>
+<ValorIR>69,67</ValorIR>
+<ValorPIS>0,00</ValorPIS>
+<ValorCOFINS>0,00</ValorCOFINS>
+<ValorCSLL>0,00</ValorCSLL>
+<ValorISS>92,90</ValorISS>
+<ISSRetido>NÃO</ISSRetido>
+<InscricaoTomador>-97462711</InscricaoTomador>
+<CPFCNPJTomador>
+<CPF>43688051000160</CPF>
+</CPFCNPJTomador>
+<IETomador></IETomador>
+<RazaoSocialTomador>VAIO COMERCIAL IMPORTACAO E EXPORTACAO LTDA</RazaoSocialTomador>
+<EnderecoTomador>
+<Logradouro>R MARCILIO DIAS</Logradouro>
+<NumeroEndereco>40</NumeroEndereco>
+<ComplementoEndereco>SALA 01</ComplementoEndereco>
+<Bairro>CENTRO</Bairro>
+<Cidade>SAO FRANCISCO DO SUL</Cidade>
+<UF>SC</UF>
+<CEP>89240000</CEP>
+</EnderecoTomador>
+<TelefoneTomador>(47) 3046-5250</TelefoneTomador>
+<EmailTomador>edson.selesgmail.com</EmailTomador>
+<Discriminacao>Prestação de Serviço de Representação Comercial.
+
+Valor líquido: R$ 4.575,33.
+
+Dados bancários:
+LACERDA REPRESENTAÇÕES S/S LTDA
+CNPJ: 09.359.315/0001-02 (PIX)
+
+BANCO ITAÚ – 341
+AG: 0166
+CC: 98948-3</Discriminacao>
+</NFe>

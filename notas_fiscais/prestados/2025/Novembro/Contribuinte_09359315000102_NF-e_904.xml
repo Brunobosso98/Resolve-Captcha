@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<NFe xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Prefeitura>Itapira</Prefeitura>
+<InscricaoPrestador>49472</InscricaoPrestador>
+<IEPrestador></IEPrestador>
+<CPFCNPJPrestador>
+<CNPJ>09359315000102</CNPJ>
+</CPFCNPJPrestador>
+<ChaveNFe>
+<NumeroNFe>904</NumeroNFe>
+<SerieNFe>1</SerieNFe>
+<CodigoVerificacao>6HDLJXTF</CodigoVerificacao>
+<DataEmissaoNFe>2025-11-10 09:31:25</DataEmissaoNFe>
+</ChaveNFe>
+<RazaoSocialPrestador>LACERDA REPRESENTAÇÕES S/S LTDA.</RazaoSocialPrestador>
+<EnderecoPrestador>
+<Logradouro>RUA FRANCISCO GLICÉRIO</Logradouro>
+<NumeroEndereco>175</NumeroEndereco>
+<ComplementoEndereco>SALA 02</ComplementoEndereco>
+<Bairro>CENTRO</Bairro>
+<Cidade>ITAPIRA</Cidade>
+<UF>SP</UF>
+<CEP>13970140</CEP>
+</EnderecoPrestador>
+<TelefonePrestador>38436333</TelefonePrestador>
+<EmailPrestador></EmailPrestador>
+<StatusNFe>Ativa</StatusNFe>
+<TributacaoNFe>Tributado no Prestador</TributacaoNFe>
+<OpcaoSimples>NÃO</OpcaoSimples>
+<ValorServicos>49,60</ValorServicos>
+<ValorBase>49,60</ValorBase>
+<CodigoServico>1009</CodigoServico>
+<AliquotaServicos>2,00</AliquotaServicos>
+<ValorINSS>0,00</ValorINSS>
+<ValorIR>0,00</ValorIR>
+<ValorPIS>0,00</ValorPIS>
+<ValorCOFINS>0,00</ValorCOFINS>
+<ValorCSLL>0,00</ValorCSLL>
+<ValorISS>0,99</ValorISS>
+<ISSRetido>NÃO</ISSRetido>
+<InscricaoTomador>-2</InscricaoTomador>
+<CPFCNPJTomador>
+<CPF>05430618000105</CPF>
+</CPFCNPJTomador>
+<IETomador></IETomador>
+<RazaoSocialTomador>TRELICAMP INDUSTRIA E COMERCIO</RazaoSocialTomador>
+<EnderecoTomador>
+<Logradouro>ROD SP 332, S/N KM 159,5</Logradouro>
+<NumeroEndereco>1938579284</NumeroEndereco>
+<ComplementoEndereco></ComplementoEndereco>
+<Bairro>RURAL</Bairro>
+<Cidade>ENGENHEIRO COELHO</Cidade>
+<UF>SP</UF>
+<CEP>13445970</CEP>
+</EnderecoTomador>
+<TelefoneTomador>1938579294</TelefoneTomador>
+<EmailTomador>anapaulatrelicamp.com.br</EmailTomador>
+<Discriminacao>Prestação de Serviço de Representação Comercial.
+
+Dados bancários:
+LACERDA REPRESENTAÇÕES S/S LTDA
+CNPJ: 09.359.315/0001-02 (PIX)
+
+BANCO ITAÚ – 341
+AG: 0166
+CC: 98948-3</Discriminacao>
+</NFe>

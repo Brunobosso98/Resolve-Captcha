@@ -4,4 +4,3 @@
 dist
 venv/
 *.spec
-*.xlsx

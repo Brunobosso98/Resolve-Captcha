@@ -42,7 +42,7 @@ def click_element(wait, locator, descricao, tentativas=3):
     raise ultima_excecao or Exception("Não foi possível clicar no elemento.")
 
 # Configuração idêntica à do captcha2.py para evitar divergências
-CAMINHO_TESSERACT = r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe'
+CAMINHO_TESSERACT = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
 URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
 
@@ -245,7 +245,7 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index=None
         try:
             # Aguardar até 2 minutos pelo alerta
             from selenium.webdriver.support.ui import WebDriverWait
-            fallback_wait = WebDriverWait(driver, 60)  # 2 minutos de espera
+            fallback_wait = WebDriverWait(driver, 10)  # 2 minutos de espera
             alert = fallback_wait.until(EC.alert_is_present())
             alert_text = alert.text
             print(f"Alerta encontrado: {alert_text}")
@@ -326,6 +326,7 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index=None
             if len(janelas) > 1:
                 driver.switch_to.window(janelas[1])
                 print("Mudou para a nova aba com o PDF.")
+                time.sleep(1)
 
                 try:
                     wait_pdf = WebDriverWait(driver, 30)
