@@ -1,7 +1,7 @@
 import sys
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import StaleElementReferenceException
@@ -216,6 +216,24 @@ def exportar_notas_tomados(driver, wait, mes, ano, empresa, linha_index=None):
         click_element(wait, (By.XPATH, "//a[contains(@href, 'nfe_historico_exportacao_tomador.php')]"), "Link 'Exportar notas'")
         driver.switch_to.default_content()
         wait.until(EC.frame_to_be_available_and_switch_to_it((By.ID, "main")))
+
+        # Select the month from the dropdown using send_keys (like in preencher_data function)
+        campo_mes = wait.until(EC.presence_of_element_located((By.ID, "mesI")))
+        campo_mes.send_keys(str(mes))
+        print(f"Mês '{mes}' selecionado com sucesso!")
+
+        # Fill the year in the input field
+        campo_ano = wait.until(EC.element_to_be_clickable((By.ID, "anoI")))
+        campo_ano.clear()
+        campo_ano.send_keys(str(ano))
+        print(f"Ano '{ano}' preenchido com sucesso!")
+
+        # Click the "Filtrar" button
+        botao_filtrar = wait.until(EC.element_to_be_clickable((By.XPATH, "//input[@type='submit' and @value='Filtrar']")))
+        botao_filtrar.click()
+        print("Botão 'Filtrar' clicado com sucesso!")
+        time.sleep(1)  # Wait 1 second as requested
+
         checkbox = wait.until(EC.element_to_be_clickable((By.ID, "todos")))
         if not checkbox.is_selected():
             checkbox.click()

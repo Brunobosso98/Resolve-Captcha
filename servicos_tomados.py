@@ -50,8 +50,8 @@ def construir_pasta_servicos_tomados(ano, mes):
     return pasta
 
 # Configuração idêntica à do captcha2.py para evitar divergências
-CAMINHO_TESSERACT = r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe'
-CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
+CAMINHO_TESSERACT = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira Prestadoras (Maria).xlsx')
 URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
 BASE_PDF_URL = "https://itapira.sigiss.com.br/itapira/barcode/ficha_comp.php?bid="
 
@@ -168,12 +168,12 @@ def preencher_data(driver, wait, mes, ano, empresa, linha_index=None):
         campo_ano = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="panelFiltro"]/table/tbody/tr/td[7]/input')))
         campo_ano.clear()
         campo_ano.send_keys(ano)
-        print(f"Ano '{ano}' digitado com sucesso!")
-        
+        print(f"Ano '{ano}' digitado com sucesso!")        
         # Clicar no botão OK após preencher mês e ano
         botao_ok = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-success")))
         botao_ok.click()
         print("Botão OK clicado com sucesso!")
+        time.sleep(1)
 
         # Reload the page after accepting the alert
         driver.refresh()
