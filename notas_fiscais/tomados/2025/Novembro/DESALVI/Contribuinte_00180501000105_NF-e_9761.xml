@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<NFe xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Prefeitura>Itapira</Prefeitura>
+<InscricaoPrestador>32552</InscricaoPrestador>
+<IEPrestador>374035097112</IEPrestador>
+<CPFCNPJPrestador>
+<CNPJ>00180501000105</CNPJ>
+</CPFCNPJPrestador>
+<ChaveNFe>
+<NumeroNFe>9761</NumeroNFe>
+<SerieNFe>1</SerieNFe>
+<CodigoVerificacao>5GAO4DXT</CodigoVerificacao>
+<DataEmissaoNFe>2019-10-31 14:48:44</DataEmissaoNFe>
+</ChaveNFe>
+<RazaoSocialPrestador>INDÚSTRIA GRÁFICA EVERESTY DE ITAPIRA LTDA.</RazaoSocialPrestador>
+<EnderecoPrestador>
+<Logradouro>SOARES</Logradouro>
+<NumeroEndereco>109</NumeroEndereco>
+<ComplementoEndereco></ComplementoEndereco>
+<Bairro>JARDIM SOARES</Bairro>
+<Cidade>Itapira</Cidade>
+<UF>SP</UF>
+<CEP>13976052</CEP>
+</EnderecoPrestador>
+<TelefonePrestador>(19) 3863-7764</TelefonePrestador>
+<EmailPrestador>contatoeriachuelo.com.br</EmailPrestador>
+<StatusNFe>Ativa</StatusNFe>
+<TributacaoNFe>Tributado no Tomador</TributacaoNFe>
+<OpcaoSimples>SIM</OpcaoSimples>
+<ValorServicos>2275,00</ValorServicos>
+<ValorBase>2275,00</ValorBase>
+<CodigoServico>1305</CodigoServico>
+<AliquotaServicos>4,03</AliquotaServicos>
+<ValorINSS>0,00</ValorINSS>
+<ValorIR>0,00</ValorIR>
+<ValorPIS>0,00</ValorPIS>
+<ValorCOFINS>0,00</ValorCOFINS>
+<ValorCSLL>0,00</ValorCSLL>
+<ValorISS>91,68</ValorISS>
+<ISSRetido>SIM</ISSRetido>
+<InscricaoTomador>28523</InscricaoTomador>
+<CPFCNPJTomador>
+<CPF>01152737000192</CPF>
+</CPFCNPJTomador>
+<IETomador>374038148118</IETomador>
+<RazaoSocialTomador>DE SALVI CORRETORA DE SEGUROS S/S LTDA</RazaoSocialTomador>
+<EnderecoTomador>
+<Logradouro>RUA GENERAL CARNEIRO</Logradouro>
+<NumeroEndereco>366</NumeroEndereco>
+<ComplementoEndereco></ComplementoEndereco>
+<Bairro>SANTA CRUZ</Bairro>
+<Cidade>ITAPIRA</Cidade>
+<UF>SP</UF>
+<CEP>13974330</CEP>
+</EnderecoTomador>
+<TelefoneTomador>(19) 38630585</TelefoneTomador>
+<EmailTomador>seguroscorretorasalvi.com.br</EmailTomador>
+<Discriminacao>Calendarios de Mesa De Salvi 2020    QUANT: 500 VLR UNIT: R$ 4,55   TOTAL: 2275,00|VENCIMENTO: 21/11/2019    R$ 636,09|VENCIMENTO: 12/12/2019    R$ 727,77|VENCIMENTO: 26/12/2019    R$ 819,46|</Discriminacao>
+</NFe>

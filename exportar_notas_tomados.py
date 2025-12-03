@@ -38,8 +38,8 @@ def click_element(wait, locator, descricao, tentativas=3):
     raise ultima_excecao or Exception("Não foi possível clicar no elemento.")
 
 
-CAMINHO_TESSERACT = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira Prestadoras (Maria).xlsx')
+CAMINHO_TESSERACT = r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe'
+CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
 URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
 
 pytesseract.pytesseract.tesseract_cmd = CAMINHO_TESSERACT
@@ -182,6 +182,35 @@ def exportar_notas_tomados(driver, wait, mes, ano, empresa, linha_index=None):
         click_element(wait, (By.XPATH, "//button[contains(text(), 'Acessórios')]"), "Botão 'Acessórios'")
         click_element(wait, (By.XPATH, "//a[contains(@onclick, \"abre_arquivo('dmm/_menu.php')\")]"), "Link 'Painel de Controle'")
         time.sleep(3)
+
+        # Validation steps before proceeding to export
+        wait.until(EC.frame_to_be_available_and_switch_to_it((By.ID, "main")))
+        click_element(wait, (By.XPATH, "//td[contains(@onclick, \"display('tableEscritura_t')\")]"), "Escrituração Fiscal")
+        click_element(wait, (By.XPATH, "//a[contains(@href, 'notas_tomadas_geral_nfe.php')]"), "Validar NFS-e Recebidas")
+
+        # Switch to the new page and handle validation
+        driver.switch_to.default_content()
+        wait.until(EC.frame_to_be_available_and_switch_to_it((By.ID, "main")))
+
+        # Click the checkbox to select all
+        checkbox_todos = wait.until(EC.element_to_be_clickable((By.ID, "todos")))
+        if not checkbox_todos.is_selected():
+            checkbox_todos.click()
+
+        # Click the "Validar" button
+        click_element(wait, (By.ID, "btnValidar"), "Botão 'Validar'")
+
+        # Handle the alert that appears after clicking Validar
+        alert = WebDriverWait(driver, 20).until(EC.alert_is_present())
+        print("Alert de validação encontrado.")
+        alert.accept()
+
+        # Return to the original flow by clicking Acessórios and Painel de Controle again
+        driver.switch_to.default_content()
+        click_element(wait, (By.XPATH, "//button[contains(text(), 'Acessórios')]"), "Botão 'Acessórios'")
+        click_element(wait, (By.XPATH, "//a[contains(@onclick, \"abre_arquivo('dmm/_menu.php')\")]"), "Link 'Painel de Controle'")
+        time.sleep(3)
+
         wait.until(EC.frame_to_be_available_and_switch_to_it((By.ID, "main")))
         click_element(wait, (By.XPATH, "//td[contains(@onclick, \"display('nfeTomado')\")]"), "Ferramentas NFS-e")
         click_element(wait, (By.XPATH, "//a[contains(@href, 'nfe_historico_exportacao_tomador.php')]"), "Link 'Exportar notas'")

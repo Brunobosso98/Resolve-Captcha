@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<NFe xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Prefeitura>Itapira</Prefeitura>
+<InscricaoPrestador>4909</InscricaoPrestador>
+<IEPrestador>374122654118</IEPrestador>
+<CPFCNPJPrestador>
+<CNPJ>08405988000180</CNPJ>
+</CPFCNPJPrestador>
+<ChaveNFe>
+<NumeroNFe>652</NumeroNFe>
+<SerieNFe>1</SerieNFe>
+<CodigoVerificacao>D5JFJ1BE</CodigoVerificacao>
+<DataEmissaoNFe>2012-12-11 15:16:58</DataEmissaoNFe>
+</ChaveNFe>
+<RazaoSocialPrestador>RUDNEI SUPRIMENTOS DE INFORMÁTICA LTDA.</RazaoSocialPrestador>
+<EnderecoPrestador>
+<Logradouro>AVENIDA RIO BRANCO</Logradouro>
+<NumeroEndereco>709</NumeroEndereco>
+<ComplementoEndereco></ComplementoEndereco>
+<Bairro>CENTRO</Bairro>
+<Cidade>ITAPIRA</Cidade>
+<UF>SP</UF>
+<CEP>13970070</CEP>
+</EnderecoPrestador>
+<TelefonePrestador>38133166</TelefonePrestador>
+<EmailPrestador>fiscalviacontabil.adm.br</EmailPrestador>
+<StatusNFe>Ativa</StatusNFe>
+<TributacaoNFe>Tributado no Tomador</TributacaoNFe>
+<OpcaoSimples>NÃO</OpcaoSimples>
+<ValorServicos>50,00</ValorServicos>
+<ValorBase>50,00</ValorBase>
+<CodigoServico>1401</CodigoServico>
+<AliquotaServicos>2,00</AliquotaServicos>
+<ValorINSS>0,00</ValorINSS>
+<ValorIR>0,00</ValorIR>
+<ValorPIS>0,00</ValorPIS>
+<ValorCOFINS>0,00</ValorCOFINS>
+<ValorCSLL>0,00</ValorCSLL>
+<ValorISS>1,00</ValorISS>
+<ISSRetido>SIM</ISSRetido>
+<InscricaoTomador>28523</InscricaoTomador>
+<CPFCNPJTomador>
+<CPF>01152737000192</CPF>
+</CPFCNPJTomador>
+<IETomador>374038148118</IETomador>
+<RazaoSocialTomador>DE SALVI CORRETORA DE SEGUROS S/S LTDA</RazaoSocialTomador>
+<EnderecoTomador>
+<Logradouro>RUA GENERAL CARNEIRO</Logradouro>
+<NumeroEndereco>366</NumeroEndereco>
+<ComplementoEndereco></ComplementoEndereco>
+<Bairro>SANTA CRUZ</Bairro>
+<Cidade>ITAPIRA</Cidade>
+<UF>SP</UF>
+<CEP>13974330</CEP>
+</EnderecoTomador>
+<TelefoneTomador>(19) 38630585</TelefoneTomador>
+<EmailTomador>seguroscorretorasalvi.com.br</EmailTomador>
+<Discriminacao>REMANUFATURA DE TONER SCX 4521F</Discriminacao>
+</NFe>

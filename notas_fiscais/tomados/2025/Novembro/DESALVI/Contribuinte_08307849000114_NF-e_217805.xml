@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<NFe xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Prefeitura>Itapira</Prefeitura>
+<InscricaoPrestador>07836</InscricaoPrestador>
+<IEPrestador>374127503118</IEPrestador>
+<CPFCNPJPrestador>
+<CNPJ>08307849000114</CNPJ>
+</CPFCNPJPrestador>
+<ChaveNFe>
+<NumeroNFe>217805</NumeroNFe>
+<SerieNFe>1</SerieNFe>
+<CodigoVerificacao>SGY5DF49</CodigoVerificacao>
+<DataEmissaoNFe>2022-03-28 15:25:26</DataEmissaoNFe>
+</ChaveNFe>
+<RazaoSocialPrestador>SEICON SISTEMA EMPRESARIAL INT. DE CONV. E SEG. LTDA.</RazaoSocialPrestador>
+<EnderecoPrestador>
+<Logradouro>GETÚLIO VARGAS</Logradouro>
+<NumeroEndereco>708</NumeroEndereco>
+<ComplementoEndereco></ComplementoEndereco>
+<Bairro>VILA SANTA MARTA</Bairro>
+<Cidade>Itapira</Cidade>
+<UF>SP</UF>
+<CEP>13976400</CEP>
+</EnderecoPrestador>
+<TelefonePrestador>(19) 3913-9333</TelefonePrestador>
+<EmailPrestador>escritorio.itapirensebol.com.br</EmailPrestador>
+<StatusNFe>Ativa</StatusNFe>
+<TributacaoNFe>Outro municipio</TributacaoNFe>
+<OpcaoSimples>NÃO</OpcaoSimples>
+<ValorServicos>1079,96</ValorServicos>
+<ValorBase>1079,96</ValorBase>
+<CodigoServico>15011</CodigoServico>
+<AliquotaServicos>0,00</AliquotaServicos>
+<ValorINSS>0,00</ValorINSS>
+<ValorIR>0,00</ValorIR>
+<ValorPIS>0,00</ValorPIS>
+<ValorCOFINS>0,00</ValorCOFINS>
+<ValorCSLL>0,00</ValorCSLL>
+<ValorISS>0,00</ValorISS>
+<ISSRetido>NÃO</ISSRetido>
+<InscricaoTomador>28523</InscricaoTomador>
+<CPFCNPJTomador>
+<CPF>01152737000192</CPF>
+</CPFCNPJTomador>
+<IETomador>374038148118</IETomador>
+<RazaoSocialTomador>DE SALVI CORRETORA DE SEGUROS S/S LTDA</RazaoSocialTomador>
+<EnderecoTomador>
+<Logradouro>RUA GENERAL CARNEIRO</Logradouro>
+<NumeroEndereco>366</NumeroEndereco>
+<ComplementoEndereco></ComplementoEndereco>
+<Bairro>SANTA CRUZ</Bairro>
+<Cidade>ITAPIRA</Cidade>
+<UF>SP</UF>
+<CEP>13974330</CEP>
+</EnderecoTomador>
+<TelefoneTomador>(19) 38630585</TelefoneTomador>
+<EmailTomador>seguroscorretorasalvi.com.br</EmailTomador>
+<Discriminacao>De acordo com Instrução Normativa RFB nº 1234, de 11 de janeiro de 2012|Seção VI Art. 18 § 2º - comissão: zero|2 DISPONIBILIZACAO DE VALE-ALIMENTACAO PAT 080051075 com valor de (R$ 539,98) total de (R$ 1.079,96)|</Discriminacao>
+</NFe>

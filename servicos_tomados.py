@@ -13,6 +13,7 @@ import os
 import glob
 import re
 import base64
+import json
 from openpyxl import load_workbook
 
 def get_resource_path(relative_path):
@@ -49,9 +50,10 @@ def construir_pasta_servicos_tomados(ano, mes):
     return pasta
 
 # Configuração idêntica à do captcha2.py para evitar divergências
-CAMINHO_TESSERACT = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira Prestadoras (Maria).xlsx')
+CAMINHO_TESSERACT = r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe'
+CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
 URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
+BASE_PDF_URL = "https://itapira.sigiss.com.br/itapira/barcode/ficha_comp.php?bid="
 
 pytesseract.pytesseract.tesseract_cmd = CAMINHO_TESSERACT
 
@@ -172,6 +174,10 @@ def preencher_data(driver, wait, mes, ano, empresa, linha_index=None):
         botao_ok = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-success")))
         botao_ok.click()
         print("Botão OK clicado com sucesso!")
+
+        # Reload the page after accepting the alert
+        driver.refresh()
+        time.sleep(3)
         
         # Após preencher data, verificar e clicar em Livro Fiscal para testar download (ou Encerramento Fiscal para produção)
         # Para testar o download, vamos usar a função de Livro Fiscal
@@ -309,46 +315,98 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index=None
         driver.switch_to.frame("relatorio")
         print("Entrou no iframe 'relatorio'.")
         
-        # Procurar pelo link do boleto na segunda coluna (elemento com o número do boleto)
         try:
             link_boleto = wait.until(
                 EC.element_to_be_clickable((By.XPATH, "//a[contains(@href, 'javascript:boleto_ver')]"))
             )
 
-            numero_boleto = link_boleto.text
+            numero_boleto = link_boleto.text.strip()
             print(f"Número do boleto encontrado: {numero_boleto}")
 
             pasta_download = construir_pasta_servicos_tomados(ano, mes)
+            href = link_boleto.get_attribute("href") or ""
+            match = re.search(r"boleto_ver\((\d+)", href)
+            pdf_url = f"{BASE_PDF_URL}{match.group(1)}" if match else None
+            retorno_principal = driver.current_window_handle
+            sucesso_pdf = False
+            referer_url = driver.current_url
 
-            link_boleto.click()
-            print("Link do boleto clicado com sucesso!")
+            if pdf_url:
+                for tentativa in range(3):
+                    print(f"Tentativa {tentativa + 1} para capturar o PDF via impressão silenciosa.")
+                    try:
+                        driver.execute_script("window.open(arguments[0]);", pdf_url)
+                        janelas = driver.window_handles
+                        driver.switch_to.window(janelas[-1])
+                        print("Nova aba aberta para download direto.")
+                        pastas_alerta = [pasta_download, pasta_default_downloads()]
+                        arquivos_anteriores = listar_nomes_pdfs(pastas_alerta)
+                        try:
+                            wait_pdf = WebDriverWait(driver, 20)
+                            wait_pdf.until(lambda d: d.execute_script("return document.readyState") == "complete")
+                            wait_pdf.until(lambda d: "Carregando Visualização" not in d.page_source)
+                        except Exception as exc:
+                            print(f"Aguardando o PDF direto estabilizar falhou: {exc}")
 
-            time.sleep(3)
-            janelas = driver.window_handles
-            if len(janelas) > 1:
-                driver.switch_to.window(janelas[1])
-                print("Mudou para a nova aba com o PDF.")
+                        driver.execute_script("window.print();")
+                        novo_pdf = esperar_pdf_novo(pastas_alerta, arquivos_anteriores, timeout=60)
+                        if novo_pdf:
+                            nome_limpo = re.sub(r'[<>:"/\\|?*]', '_', empresa)
+                            novo_nome = os.path.join(pasta_download, f"{nome_limpo}.pdf")
+                            os.rename(novo_pdf, novo_nome)
+                            print(f"PDF salvo automaticamente em: {novo_nome}")
+                            sucesso_pdf = True
+                        else:
+                            print("Nenhum PDF novo detectado após window.print().")
+                            sucesso_pdf = False
+                    except Exception as exc:
+                        print(f"Erro ao abrir aba direta: {exc}")
+                        sucesso_pdf = False
+                    finally:
+                        try:
+                            driver.close()
+                        except WebDriverException:
+                            pass
+                        driver.switch_to.window(retorno_principal)
 
+                    if sucesso_pdf:
+                        break
+                    time.sleep(1)
+
+            if not sucesso_pdf:
+                print("Recurriendo ao printToPDF após tentativas diretas.")
                 try:
-                    wait_pdf = WebDriverWait(driver, 30)
-                    wait_pdf.until(lambda d: d.execute_script("return document.readyState") == "complete")
-                    wait_pdf.until(lambda d: "Carregando Visualização" not in d.page_source)
-                    print("PDF estabilizado; chamando printToPDF.")
+                    link_boleto.click()
+                    print("Link do boleto clicado com sucesso!")
+                    time.sleep(3)
+                    janelas = driver.window_handles
+                    if len(janelas) > 1:
+                        driver.switch_to.window(janelas[-1])
+                        print("Mudou para a nova aba com o PDF.")
+
+                        try:
+                            wait_pdf = WebDriverWait(driver, 30)
+                            wait_pdf.until(lambda d: d.execute_script("return document.readyState") == "complete")
+                            wait_pdf.until(lambda d: "Carregando Visualização" not in d.page_source)
+                            print("PDF estabilizado; chamando printToPDF.")
+                        except Exception as exc:
+                            print(f"Tentativa de aguardar o PDF estável falhou: {exc}")
+
+                        sucesso_pdf = gerar_pdf_via_print(driver, pasta_download, empresa)
+
+                        try:
+                            driver.close()
+                        except WebDriverException as e:
+                            print(f"Erro ao fechar a aba do PDF: {e}")
+                        driver.switch_to.window(retorno_principal)
+                        print("Retornou para a aba principal.")
+                    else:
+                        print("Não foi possível abrir o PDF em uma nova aba.")
                 except Exception as exc:
-                    print(f"Tentativa de aguardar o PDF estável falhou: {exc}")
+                    print(f"Erro no fallback printToPDF: {exc}")
 
-                arquivo_salvo = gerar_pdf_via_print(driver, pasta_download, empresa)
-
-                try:
-                    driver.close()
-                    print("Fechou a aba do PDF.")
-                except WebDriverException as e:
-                    print(f"Erro ao fechar a aba do PDF: {e}")
-
-                driver.switch_to.window(janelas[0])
-                print("Retornou para a aba principal.")
-            else:
-                print("Não foi possível abrir o PDF em uma nova aba.")
+            if not sucesso_pdf:
+                print("Não foi possível capturar o PDF após todas as tentativas.")
 
         except:
             print("Nenhum boleto encontrado para o filtro selecionado. Continuando para a próxima empresa.")
@@ -367,6 +425,33 @@ def salvar_pdf_boleto(pasta_download, empresa, conteudo_bytes):
         arquivo_pdf.write(conteudo_bytes)
     print(f"Arquivo PDF salvo em: {caminho_destino}")
     return caminho_destino
+
+
+def pasta_default_downloads():
+    return os.path.join(os.path.expanduser("~"), "Downloads")
+
+
+def listar_nomes_pdfs(pastas):
+    nomes = set()
+    for pasta in pastas:
+        for f in glob.glob(os.path.join(pasta, "*.pdf")):
+            nomes.add(os.path.basename(f))
+    return nomes
+
+
+def esperar_pdf_novo(pastas, existentes, timeout=60):
+    fim = time.time() + timeout
+    while time.time() < fim:
+        novos = []
+        for pasta in pastas:
+            for f in glob.glob(os.path.join(pasta, "*.pdf")):
+                if os.path.basename(f) not in existentes:
+                    novos.append(f)
+        if novos:
+            novos.sort(key=os.path.getmtime, reverse=True)
+            return novos[0]
+        time.sleep(0.5)
+    return None
 
 
 def gerar_pdf_via_print(driver, pasta_download, empresa):
@@ -431,20 +516,28 @@ def main():
             login_falhou_credenciais = False  # Flag para indicar falha por credenciais
             
             while tentativas < max_tentativas and not login_bem_sucedido:
-                # Configurar as opções do Chrome
                 chrome_options = Options()
-                
+                chrome_options.add_argument("--kiosk-printing")
+
                 pasta_download = construir_pasta_servicos_tomados(row['Ano'], row['Mês'])
-                
-                # Configurar preferências de download
+
+                app_state = {
+                    "recentDestinations": [
+                        {"id": "Save as PDF", "origin": "local", "account": ""}
+                    ],
+                    "selectedDestinationId": "Save as PDF",
+                    "version": 2
+                }
+
                 prefs = {
                     "download.default_directory": pasta_download,
                     "download.prompt_for_download": False,
                     "download.directory_upgrade": True,
-                    "plugins.always_open_pdf_externally": True,  # Faz download em vez de abrir PDF no navegador
-                    "plugins.plugins_disabled": ["Chrome PDF Viewer"],  # Desativa o visualizador de PDF do Chrome
-                    "plugins.plugin_field_trial_triggered": False  # Impede que o Chrome abra PDFs internamente
+                    "plugins.always_open_pdf_externally": True,
+                    "plugins.plugins_disabled": ["Chrome PDF Viewer"],
+                    "plugins.plugin_field_trial_triggered": False
                 }
+                prefs["printing.print_preview_sticky_settings.appState"] = json.dumps(app_state)
                 chrome_options.add_experimental_option("prefs", prefs)
                 
                 driver = webdriver.Chrome(options=chrome_options)
