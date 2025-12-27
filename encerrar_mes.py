@@ -10,6 +10,11 @@ import pandas as pd
 import time
 import os
 from openpyxl import load_workbook
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 def get_resource_path(relative_path):
@@ -22,9 +27,9 @@ def get_resource_path(relative_path):
 
 
 # Configuração idêntica à do captcha2.py para evitar divergências
-CAMINHO_TESSERACT = r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe'
-CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
-URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
+CAMINHO_TESSERACT = os.getenv('TESSERACT_PATH', r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe')
+CAMINHO_EXCEL = get_resource_path(os.getenv('EXCEL_FILE_PATH', 'Senha Municipio Itapira.xlsx'))
+URL_LOGIN = os.getenv('LOGIN_URL', 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php')
 
 pytesseract.pytesseract.tesseract_cmd = CAMINHO_TESSERACT
 

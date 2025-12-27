@@ -15,6 +15,7 @@ import re
 import base64
 import json
 from openpyxl import load_workbook
+from dotenv import load_dotenv
 
 def get_resource_path(relative_path):
     """Obtém o caminho absoluto para recursos, funciona para desenvolvimento e para PyInstaller"""
@@ -26,6 +27,9 @@ def get_resource_path(relative_path):
         # Estamos executando como script Python normal
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
+
+
+load_dotenv()
 
 
 def click_element(wait, locator, descricao, tentativas=3):
@@ -43,10 +47,10 @@ def click_element(wait, locator, descricao, tentativas=3):
     raise ultima_excecao or Exception("Não foi possível clicar no elemento.")
 
 # Configuração idêntica à do captcha2.py para evitar divergências
-CAMINHO_TESSERACT = r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe'
-CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
-URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
-BASE_PDF_URL = "https://itapira.sigiss.com.br/itapira/barcode/ficha_comp.php?bid="
+CAMINHO_TESSERACT = os.getenv('TESSERACT_PATH', r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe')
+CAMINHO_EXCEL = get_resource_path(os.getenv('EXCEL_FILE_PATH', 'Senha Municipio Itapira.xlsx'))
+URL_LOGIN = os.getenv('LOGIN_URL', 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php')
+BASE_PDF_URL = os.getenv('BASE_PDF_URL', "https://itapira.sigiss.com.br/itapira/barcode/ficha_comp.php?bid=")
 
 pytesseract.pytesseract.tesseract_cmd = CAMINHO_TESSERACT
 

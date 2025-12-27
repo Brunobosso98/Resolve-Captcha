@@ -1,6 +1,8 @@
 *.xlsx
+.env
 
 .build
-dist
+build/
+dist/
 venv/
 *.spec

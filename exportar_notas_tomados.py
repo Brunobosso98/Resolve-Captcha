@@ -14,6 +14,7 @@ import glob
 import re
 import zipfile
 from openpyxl import load_workbook
+from dotenv import load_dotenv
 
 
 def get_resource_path(relative_path):
@@ -23,6 +24,8 @@ def get_resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
+
+load_dotenv()
 
 def click_element(wait, locator, descricao, tentativas=3):
     ultima_excecao = None
@@ -38,9 +41,9 @@ def click_element(wait, locator, descricao, tentativas=3):
     raise ultima_excecao or Exception("Não foi possível clicar no elemento.")
 
 
-CAMINHO_TESSERACT = r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe'
-CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
-URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
+CAMINHO_TESSERACT = os.getenv('TESSERACT_PATH', r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe')
+CAMINHO_EXCEL = get_resource_path(os.getenv('EXCEL_FILE_PATH', 'Senha Municipio Itapira.xlsx'))
+URL_LOGIN = os.getenv('LOGIN_URL', 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php')
 
 pytesseract.pytesseract.tesseract_cmd = CAMINHO_TESSERACT
 
