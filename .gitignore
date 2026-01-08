@@ -1,6 +1,10 @@
 *.xlsx
-
+*.pdf
 .build
 dist
 venv/
 *.spec
+Livro/
+downloads/
+*.spec
+*.png

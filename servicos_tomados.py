@@ -14,6 +14,7 @@ import glob
 import re
 import base64
 import json
+import shutil
 from openpyxl import load_workbook
 
 def get_resource_path(relative_path):
@@ -50,8 +51,8 @@ def construir_pasta_servicos_tomados(ano, mes):
     return pasta
 
 # Configuração idêntica à do captcha2.py para evitar divergências
-CAMINHO_TESSERACT = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira Prestadoras (Maria).xlsx')
+CAMINHO_TESSERACT = r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe'
+CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
 URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
 BASE_PDF_URL = "https://itapira.sigiss.com.br/itapira/barcode/ficha_comp.php?bid="
 
@@ -216,9 +217,9 @@ def clicar_livro_fiscal(driver, wait, mes, ano, empresa):
                 nome_limpo = re.sub(r'[<>:"/\\|?*]', '_', empresa)  # Remover caracteres inválidos para nomes de arquivo
                 novo_nome = os.path.join(pasta_download, f"{nome_limpo}.pdf")
                 
-                # Renomear o arquivo
-                os.rename(arquivo_original, novo_nome)
-                print(f"Arquivo PDF renomeado para: {novo_nome}")
+                # Mover o arquivo (usando shutil.move para funcionar entre unidades diferentes)
+                shutil.move(arquivo_original, novo_nome)
+                print(f"Arquivo PDF movido para: {novo_nome}")
             else:
                 print("Nenhum arquivo PDF encontrado na pasta de download.")
             
@@ -250,23 +251,35 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index=None
         botao_encerrar = wait.until(
             EC.element_to_be_clickable((By.ID, "btnSalvar"))
         )
-        botao_encerrar.click()
-        print("Botão 'Encerrar Mes' clicado com sucesso!")
+
+        # Verificar o texto do botão
+        botao_texto = botao_encerrar.text
+        print(f"Texto do botão encontrado: {botao_texto}")
+
+        # Se o botão tem o texto "Certificado", pular a parte de clicar e esperar alerta
+        if botao_texto.strip() == "Certificado":
+            print("Botão tem o texto 'Certificado', pulando clique e alerta.")
+        else:
+            botao_encerrar.click()
+            print("Botão 'Encerrar Mes' clicado com sucesso!")
         
         # Lidar com o alerta do navegador com fallback de 2 minutos
-        try:
-            # Aguardar até 2 minutos pelo alerta
-            from selenium.webdriver.support.ui import WebDriverWait
-            fallback_wait = WebDriverWait(driver, 60)  # 2 minutos de espera
-            alert = fallback_wait.until(EC.alert_is_present())
-            alert_text = alert.text
-            print(f"Alerta encontrado: {alert_text}")
-            alert.accept()  # Clica em OK no alerta
-            print("Alerta aceito com sucesso!")
-        except:
-            print("Nenhum alerta encontrado ou não foi possível interagir com ele após 1 minutos. Continuando para a próxima empresa.")
-            if linha_index is not None:
-                atualizar_excel_status(linha_index, 'Escrituração pode não ter sido finalizada')
+        if botao_texto.strip() != "Certificado":
+            try:
+                # Aguardar até 1 minuto pelo alerta
+                from selenium.webdriver.support.ui import WebDriverWait
+                fallback_wait = WebDriverWait(driver, 60)  # 1 minuto de espera
+                alert = fallback_wait.until(EC.alert_is_present())
+                alert_text = alert.text
+                print(f"Alerta encontrado: {alert_text}")
+                alert.accept()  # Clica em OK no alerta
+                print("Alerta aceito com sucesso!")
+            except:
+                print("Nenhum alerta encontrado ou não foi possível interagir com ele após 1 minutos. Continuando para a próxima empresa.")
+                if linha_index is not None:
+                    atualizar_excel_status(linha_index, 'Escrituração pode não ter sido finalizada')
+        else:
+            print("Pulando verificação de alerta pois o botão tem texto 'Certificado'.")
         
         # Após completar o encerramento fiscal, voltar ao frame principal
         driver.switch_to.default_content()
@@ -353,7 +366,7 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index=None
                         if novo_pdf:
                             nome_limpo = re.sub(r'[<>:"/\\|?*]', '_', empresa)
                             novo_nome = os.path.join(pasta_download, f"{nome_limpo}.pdf")
-                            os.rename(novo_pdf, novo_nome)
+                            shutil.move(novo_pdf, novo_nome)
                             print(f"PDF salvo automaticamente em: {novo_nome}")
                             sucesso_pdf = True
                         else:
@@ -574,7 +587,7 @@ def main():
                         print(f"Números extraídos: {numeros}")
                         # Digitar no campo
                         digitar_captcha(driver, numeros, wait)
-                        time.sleep(10)
+                        time.sleep(60)
                         
                         if processar_login(driver, wait):
                             login_bem_sucedido = True  # Define como True para sair do loop

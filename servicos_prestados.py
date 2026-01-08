@@ -240,23 +240,34 @@ def clicar_encerramento_fiscal(driver, wait, mes, ano, empresa, linha_index=None
         botao_encerrar = wait.until(
             EC.element_to_be_clickable((By.ID, "btnSalvar"))
         )
-        botao_encerrar.click()
-        print("Botão 'Encerrar Mes' clicado com sucesso!")
+        # Verificar o texto do botão
+        botao_texto = botao_encerrar.text
+        print(f"Texto do botão encontrado: {botao_texto}")
+
+        # Se o botão tem o texto "Certificado", pular a parte de clicar e esperar alerta
+        if botao_texto.strip() == "Certificado":
+            print("Botão tem o texto 'Certificado', pulando clique e alerta.")
+        else:
+            botao_encerrar.click()
+            print("Botão 'Encerrar Mes' clicado com sucesso!")
         
         # Lidar com o alerta do navegador com fallback de 2 minutos
-        try:
-            # Aguardar até 2 minutos pelo alerta
-            from selenium.webdriver.support.ui import WebDriverWait
-            fallback_wait = WebDriverWait(driver, 10)  # 2 minutos de espera
-            alert = fallback_wait.until(EC.alert_is_present())
-            alert_text = alert.text
-            print(f"Alerta encontrado: {alert_text}")
-            alert.accept()  # Clica em OK no alerta
-            print("Alerta aceito com sucesso!")
-        except:
-            print("Nenhum alerta encontrado ou não foi possível interagir com ele após 1 minuto. Continuando para a próxima empresa.")
-            if linha_index is not None:
-                atualizar_excel_status(linha_index, 'Escrituração pode não ter sido finalizada')
+        if botao_texto.strip() != "Certificado":
+            try:
+                # Aguardar até 1 minuto pelo alerta
+                from selenium.webdriver.support.ui import WebDriverWait
+                fallback_wait = WebDriverWait(driver, 60)  # 1 minuto de espera
+                alert = fallback_wait.until(EC.alert_is_present())
+                alert_text = alert.text
+                print(f"Alerta encontrado: {alert_text}")
+                alert.accept()  # Clica em OK no alerta
+                print("Alerta aceito com sucesso!")
+            except:
+                print("Nenhum alerta encontrado ou não foi possível interagir com ele após 1 minutos. Continuando para a próxima empresa.")
+                if linha_index is not None:
+                    atualizar_excel_status(linha_index, 'Escrituração pode não ter sido finalizada')
+        else:
+            print("Pulando verificação de alerta pois o botão tem texto 'Certificado'.")
         
         # Após completar o encerramento fiscal, voltar ao frame principal
         driver.switch_to.default_content()
