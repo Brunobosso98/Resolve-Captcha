@@ -43,7 +43,7 @@ def click_element(wait, locator, descricao, tentativas=3):
 
 def construir_pasta_livro(ano, mes):
     """Retorna o caminho estruturado dentro de Livro e garante que exista."""
-    pasta = os.path.join(os.getcwd(), "Livro", str(ano), str(mes).zfill(2))
+    pasta = os.path.join(os.getcwd(), "Livro", "tomados", str(ano), str(mes).zfill(2))
     os.makedirs(pasta, exist_ok=True)
     return pasta
 

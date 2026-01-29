@@ -46,7 +46,7 @@ def click_element(wait, locator, descricao, tentativas=3):
 CAMINHO_TESSERACT = r'W:\Fiscal\Escrita Fiscal\Davi\dependencias sistema\Tesseract-OCR\tesseract.exe'
 CAMINHO_EXCEL = get_resource_path('Senha Municipio Itapira.xlsx')
 URL_LOGIN = 'https://itapira.sigiss.com.br/itapira/contribuinte/login.php'
-BASE_PDF_URL = "https://itapira.sigiss.com.br/itapira/barcode/ficha_comp.php?bid="
+BASE_PDF_URL = os.getenv('BASE_PDF_URL', "https://itapira.sigiss.com.br/itapira/barcode/ficha_comp.php?bid=")
 
 pytesseract.pytesseract.tesseract_cmd = CAMINHO_TESSERACT
 

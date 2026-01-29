@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *.xlsx
 *.pdf
 .build
@@ -8,3 +9,13 @@ Livro/
 downloads/
 *.spec
 *.png
+=======
+*.xlsx
+.env
+
+.build
+build/
+dist/
+venv/
+*.spec
+>>>>>>> 1bd30c95f66d1a82052c009a9e381519bf905b02

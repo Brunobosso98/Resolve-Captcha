@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<NFe xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<Prefeitura>Itapira</Prefeitura>
+<InscricaoPrestador>6103</InscricaoPrestador>
+<IEPrestador>ISENTO</IEPrestador>
+<CPFCNPJPrestador>
+<CNPJ>14097460000194</CNPJ>
+</CPFCNPJPrestador>
+<ChaveNFe>
+<NumeroNFe>180</NumeroNFe>
+<SerieNFe>1</SerieNFe>
+<CodigoVerificacao>4PQBEQBR</CodigoVerificacao>
+<DataEmissaoNFe>2026-01-06 01:09:35</DataEmissaoNFe>
+</ChaveNFe>
+<RazaoSocialPrestador>AEROJOB CONSULTORIA E SERVIÇOS LTDA. </RazaoSocialPrestador>
+<EnderecoPrestador>
+<Logradouro>BENJAMIM ORLANDI</Logradouro>
+<NumeroEndereco>30</NumeroEndereco>
+<ComplementoEndereco>SALA 02</ComplementoEndereco>
+<Bairro>PARQUE FORTALEZA </Bairro>
+<Cidade>Itapira</Cidade>
+<UF>SP</UF>
+<CEP>13973015</CEP>
+</EnderecoPrestador>
+<TelefonePrestador>(19) 3813-2131</TelefonePrestador>
+<EmailPrestador>edu55jobgmail.com</EmailPrestador>
+<StatusNFe>Cancelada</StatusNFe>
+<TributacaoNFe>Cancelada</TributacaoNFe>
+<OpcaoSimples>NÃO</OpcaoSimples>
+<ValorServicos>0,00</ValorServicos>
+<ValorBase>0,00</ValorBase>
+<CodigoServico>1701</CodigoServico>
+<AliquotaServicos>3,00</AliquotaServicos>
+<ValorINSS>0,00</ValorINSS>
+<ValorIR>52,50</ValorIR>
+<ValorPIS>22,75</ValorPIS>
+<ValorCOFINS>105,00</ValorCOFINS>
+<ValorCSLL>35,00</ValorCSLL>
+<ValorISS>0,00</ValorISS>
+<ISSRetido>NÃO</ISSRetido>
+<InscricaoTomador>-24050</InscricaoTomador>
+<CPFCNPJTomador>
+<CPF>07743272000120</CPF>
+</CPFCNPJTomador>
+<IETomador></IETomador>
+<RazaoSocialTomador>AZIDUS BRASIL PESQUISA CIENTIFICA E DESENVOLVIMENTO LTDA</RazaoSocialTomador>
+<EnderecoTomador>
+<Logradouro>R GENERAL OSORIO</Logradouro>
+<NumeroEndereco>507</NumeroEndereco>
+<ComplementoEndereco>SALA 02 E 04</ComplementoEndereco>
+<Bairro>VILA MARTINA</Bairro>
+<Cidade>VALINHOS</Cidade>
+<UF>SP</UF>
+<CEP>13271130</CEP>
+</EnderecoTomador>
+<TelefoneTomador>(19) 3829-6160</TelefoneTomador>
+<EmailTomador>financeiroazdcro.com.br</EmailTomador>
+<Discriminacao>Serviços de Consultoria Online.
+
+CSRF (4,65) = R$ 162,75
+IRRF (1,50) = R$ 52,50
+Liquido a Receber: R$ 3.284,75.
+
+nf  substituta 181  2026-01-13 17:24:49 Cancelado por:  carlos </Discriminacao>
+</NFe>
