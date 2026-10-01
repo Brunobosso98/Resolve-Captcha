@@ -21,7 +21,7 @@
 - Login SIGISS:
   usa CNPJ em `Usuário`, senha da planilha e captcha OCR com Tesseract.
 - Avisos antes do login:
-  `exportar_notas_tomados.py`, `serv_prestado_simples_nacional.py`, `servicos_prestados_demais.py` e `servicos_tomados.py` chamam `sigiss_modais.fechar_avisos_login()`. A rotina busca todos os botões `btnCiente`, aguarda o fim das transições do Bootstrap (`bs.modal._isTransitioning`), clica nos visíveis e aguarda cada um desaparecer; após um fechamento, espera até 3 segundos pelo próximo aviso, com limite total de 20 segundos. O site abre `myModal3`, `myModal2` e `myModal` nessa ordem. Falhas no fechamento geram mensagens específicas e uma nova tentativa de acesso para a empresa, respeitando o limite de tentativas existente.
+  `exportar_notas_tomados.py`, `serv_prestado_simples_nacional.py`, `servicos_prestados_demais.py`, `servicos_tomados.py`, `livro_mensal_prestados.py` e `livro_mensal_tomados2.py` chamam `sigiss_modais.fechar_avisos_login()`. A rotina busca todos os botões `btnCiente`, aguarda o fim das transições do Bootstrap (`bs.modal._isTransitioning`), clica nos visíveis e aguarda cada um desaparecer; após um fechamento, espera até 3 segundos pelo próximo aviso, com limite total de 20 segundos. O site abre `myModal3`, `myModal2` e `myModal` nessa ordem. Falhas no fechamento geram mensagens específicas e uma nova tentativa de acesso para a empresa, respeitando o limite de tentativas existente.
 - Competência:
   os scripts alteram mês e ano no painel principal após autenticação.
 - Livro mensal:

@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
 import pytesseract
 from PIL import Image
 import pandas as pd
@@ -15,6 +15,8 @@ import re
 import json
 import shutil
 from openpyxl import load_workbook
+
+from sigiss_modais import fechar_avisos_login
 
 
 def get_resource_path(relative_path):
@@ -291,15 +293,15 @@ def main():
                 time.sleep(2)
 
                 try:
-                    btn_ciente = wait.until(
-                        EC.element_to_be_clickable((By.ID, "btnCiente"))
-                    )
-                    btn_ciente.click()
-                    print("Botão 'Estou Ciente' clicado com sucesso!")
-                except Exception:
-                    print("Botão 'Estou Ciente' não encontrado ou já foi fechado.")
-
-                try:
+                    try:
+                        fechar_avisos_login(driver)
+                    except TimeoutException as exc:
+                        tentativas += 1
+                        print(
+                            f"Falha nos avisos de {row['Empresa']}: {exc.msg} "
+                            f"Tentativa {tentativas}/{max_tentativas}."
+                        )
+                        continue
                     if tentativas == 0:
                         print(f"Processando linha {index + 1}: {row['Empresa']}")
                     else:
