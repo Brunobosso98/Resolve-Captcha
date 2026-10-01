@@ -8,7 +8,7 @@ Log emissão:  notas_emitidas.txt
 📋  Planejadas na planilha:  198
 📤  Emitidas (válidas):      181
 ✅  Conferidas (match):      0
-❌  Faltam emitir:           198
+❌  Falta emitir:           198
 ⚠️   Duplicadas no log:      0
 ❓  Extras (não planejadas): 181
 
